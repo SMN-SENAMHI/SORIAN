@@ -2,69 +2,166 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>SORIAN - HPC</title>
+<title>Descripción – SORIAN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: url("https://raw.githubusercontent.com/SMN-SENAMHI/SORIAN/main/Lista/logo_sudamerica.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-.top-bar {
-  background: white;
-  padding: 6px 18px;
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  border-bottom: 1px solid #cfcfcf;
-}
-.top-bar img { height: 45px; }
-.menu-bar {
-  background: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  border-bottom: 1px solid #cfcfcf;
-}
-.menu-title { font-size: 20px; font-weight: bold; color: #000; }
-.menu-links a {
-  margin-left: 25px; text-decoration: none; color: #000; font-size: 17px;
-}
-.menu-links a:hover { border-bottom: 2px solid #000; }
-.main { text-align: center; margin-top: 160px; color: white; }
-.main-title { font-size: 50px; font-weight: bold; }
-.main-subtitle { margin-top: 15px; font-size: 22px; opacity: 0.9; }
-</style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
 
+body{background:#f4f6f9;}
+
+.top-bar{
+  background:white;padding:6px 18px;display:flex;align-items:center;gap:25px;
+  border-bottom:1px solid #cfcfcf;
+}
+.top-bar img{height:45px;}
+
+.menu-bar{
+  background:white;padding:12px;border-bottom:1px solid #cfcfcf;display:flex;justify-content:center;
+}
+.menu-links{display:flex;gap:35px;}
+.menu-links a{
+  text-decoration:none;color:#000;font-size:18px;font-weight:500;padding-bottom:4px;
+}
+.menu-links a:hover{border-bottom:2px solid #000;}
+.menu-links a.active{border-bottom:3px solid #0073ff;color:#0073ff;font-weight:700;}
+
+.contenedor{
+  max-width:1200px;margin:auto;padding:40px 30px;
+}
+
+/* TITULOS */
+h1{font-size:34px;margin-bottom:6px;color:#003b6f;font-weight:800;}
+h2{margin-top:40px;font-size:26px;color:#003b6f;}
+h3{color:#003b6f;margin-top:20px;font-weight:700;}
+
+/* CAJAS */
+.box{
+  background:white;border-radius:10px;padding:25px;margin-top:20px;
+  box-shadow:0 0 10px rgba(0,0,0,.08);
+  font-size:19px;line-height:1.6;
+}
+
+/* TABLA DE MODELOS */
+table{
+  width:100%;border-collapse:collapse;margin-top:15px;font-size:17px;
+}
+table th{
+  background:#004b8d;color:white;padding:10px;text-align:left;font-size:17px;
+}
+table td{
+  padding:8px;border-bottom:1px solid #d9d9d9;
+}
+table tr:hover{background:#f0f8ff;}
+
+/* BLOQUES DE VISOR */
+.paneles{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:18px;margin-top:20px;
+}
+.card{
+  background:white;padding:20px;border-radius:10px;
+  box-shadow:0 0 8px rgba(0,0,0,.07);
+  transition:.2s;cursor:pointer;
+}
+.card:hover{transform:scale(1.02);background:#e9f4ff;}
+
+.footer{
+  margin-top:50px;text-align:center;font-size:16px;color:#444;padding-bottom:30px;
+}
+</style>
 </head>
+
 <body>
 
+<!-- BARRA LOGOS -->
 <div class="top-bar">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png" alt="logo minam">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg" alt="logo senamhi">
+  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
+  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
 </div>
 
+<!-- MENU -->
 <div class="menu-bar">
-  <div class="menu-title">SORIAN - HPC</div>
   <div class="menu-links">
-    <a href="index.html">Inicio</a>
+    <a href="Inicio.html">Inicio</a>
+    <a href="Descripcion.html" class="active">Descripción</a>
     <a href="Subestacional.html">Subestacional</a>
     <a href="Estacional.html">Estacional</a>
     <a href="ENSO.html">ENSO</a>
-    <a href="Contactos.html">Contactos</a>
+    <a href="Sugerencias.html">Sugerencias</a>
   </div>
 </div>
 
-<div class="main">
-  <div class="main-title">Sistema SORIAN</div>
-  <div class="main-subtitle">
-    Red Integrada de Análisis Operacional Subestacional y Estacional
-  </div>
+<div class="contenedor">
+
+<!-- TITULO -->
+<h1>SORIAN</h1>
+<h2>Seasonal and Subseasonal Operational Regional Integrated Analysis of Global and Regional Models Network</h2>
+
+<div class="box">
+<b>📝 Descripción</b><br><br>
+SORIAN es una plataforma integrada diseñada para consolidar, analizar y visualizar la información más reciente disponible en predicción semanal, mensual y estacional, combinando componentes atmosféricos y oceánicos.<br><br>
+Su objetivo principal es brindar una visión clara, actualizada y de fácil interpretación sobre la predicción climática mediante la anomalía de la temperatura superficial del mar (TSM) y otras variables clave que influyen en el clima del Perú y Sudamérica.<br><br>
+Esta iniciativa surge ante la creciente disponibilidad de modelos dispersos y complejos de analizar. SORIAN unifica, estandariza y organiza la información proveniente de múltiples fuentes globales y regionales, facilitando su uso diario para vigilancia, análisis, predicción y toma de decisiones.
+</div>
+
+<!-- MODELOS GLOBALES -->
+<h2>🌍 Modelos Globales Integrados</h2>
+
+<div class="box">
+<b>Base operativa de predicción subseasonal y estacional</b><br><br>
+
+<table>
+<tr><th>Modelo</th><th>Institución / País</th></tr>
+<tr><td>BOM</td><td>Bureau of Meteorology – Australia</td></tr>
+<tr><td>ECMWF – SEAS5 / S2S</td><td>European Centre for Medium-Range Weather Forecasts – Europa</td></tr>
+<tr><td>CMCC</td><td>CENTRO Euro-Mediterráneo – Italia</td></tr>
+<tr><td>UKMO</td><td>UK Met Office – Reino Unido</td></tr>
+<tr><td>DWD</td><td>Servicio Meteorológico Alemán</td></tr>
+<tr><td>JMA</td><td>Agencia Meteorológica de Japón</td></tr>
+<tr><td>METEO_FRANCE</td><td>Météo-France – Francia</td></tr>
+<tr><td>NCEP – CFSv2 / GEFS</td><td>NOAA – Estados Unidos</td></tr>
+<tr><td>ECCC</td><td>Environment and Climate Change Canada</td></tr>
+<tr><td>GEM5</td><td>Modelo GEM – Canadá</td></tr>
+<tr><td>CanESM5</td><td>Canadian Centre for Climate Modelling – Canadá</td></tr>
+<tr><td>NCAR_CESM1</td><td>National Center for Atmospheric Research – EE.UU.</td></tr>
+<tr><td>GFDL_SPEAR</td><td>NOAA Geophysical Fluid Dynamics Laboratory – EE.UU.</td></tr>
+<tr><td>NASA_GEOS5v2</td><td>NASA GMAO – EE.UU.</td></tr>
+<tr><td>NCAR_CCSM4</td><td>National Center for Atmospheric Research – EE.UU.</td></tr>
+<tr><td>CFSv2</td><td>NCEP Climate Forecast System v2 – EE.UU.</td></tr>
+<tr><td>APCC_SCOPS</td><td>APEC Climate Center – Corea</td></tr>
+<tr><td>CWA_CWACFSv2</td><td>CWA – Taiwán</td></tr>
+<tr><td>KMA_GLOSEA6GC3.2</td><td>KMA – Corea del Sur</td></tr>
+<tr><td>MGO_MGOAM2.4</td><td>Main Geophysical Observatory – Rusia</td></tr>
+<tr><td>PNU-RDA_CGCMv2.0</td><td>Pusan National Univ. – Corea</td></tr>
+</table>
+</div>
+
+<!-- REGIONALES -->
+<h2>🏞️ Modelos Regionales</h2>
+<div class="box">
+• WRF (Weather Research and Forecasting Model)<br>
+• Downscaling dinámico 1–10km forzado por CFSv2, ECMWF, GEFS<br><br>
+<b>Referencias clave:</b><br>
+Llacza et al. (2025). <i>Improved spatial representation... (WRF)</i> https://doi.org/10.1016/j.atmosres.2025.108262<br>
+Dominguez et al. (2024). <i>Advancing South American climate modeling</i> https://doi.org/10.1175/BAMS-D-22-0226.1<br><br>
+→ Permiten análisis detallado de precipitación, T, viento y extremos en Perú.
+</div>
+
+<!-- PANEL VISOR -->
+<h2>🔎 Visores Integrados</h2>
+<div class="paneles">
+  <div class="card" onclick="location.href='Subestacional.html'">📆 Visor Subestacional<br><small>Pronóstico semana a semana</small></div>
+  <div class="card" onclick="location.href='Estacional.html'">📅 Visor Estacional<br><small>Pronóstico mensual multimodelo</small></div>
+  <div class="card" onclick="location.href='ENSO.html'">🌊 ENSO – Niño/Niña<br><small>Modelos & Boxplots</small></div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+📍 Lima – Perú<br>
+<i>Resultados referenciales sujetos a incertidumbre según escala y modelo.</i>
+</div>
+
 </div>
 
 </body>
