@@ -13,6 +13,7 @@ body {
   background: #ffffff;
 }
 
+/* ------------------------ BARRA SUPERIOR LOGOS ------------------------ */
 .top-bar {
   background: white;
   padding: 6px 18px;
@@ -23,6 +24,7 @@ body {
 }
 .top-bar img { height: 45px; }
 
+/* ------------------------ MENÚ CENTRADO ------------------------ */
 .menu-bar {
   background: white;
   padding: 12px 20px;
@@ -44,16 +46,19 @@ body {
   padding-bottom: 4px;
 }
 
+/* Hover */
 .menu-links a:hover {
   border-bottom: 2px solid #000;
 }
 
+/* Activo */
 .menu-links a.active {
   border-bottom: 3px solid #0073ff;
   color: #0073ff;
   font-weight: 700;
 }
 
+/* ------------------------ HERO IMAGE ------------------------ */
 .hero {
   width: 100%;
   height: 92vh;
@@ -63,27 +68,39 @@ body {
   background-repeat: no-repeat;
   background-color: #001f3f;
 }
+
+/* ------------------------ RESPONSIVE ------------------------ */
+@media (max-width: 768px) {
+  .hero { height: 80vh; }
+  .menu-links {
+    gap: 15px;
+    font-size: 16px;
+  }
+}
 </style>
 </head>
 
 <body>
 
+<!-- BARRA SUPERIOR: LOGOS -->
 <div class="top-bar">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
 </div>
 
+<!-- MENÚ CENTRADO -->
 <div class="menu-bar">
   <div class="menu-links">
-    <a href="Inicio.html">Inicio</a>
-    <a href="Descripcion.html">Descripción</a>
+    <a href="index.html" class="active">Inicio</a>
+    <a href="Descripcion.html">Descripcion</a>
     <a href="Subestacional.html">Subestacional</a>
     <a href="Estacional.html">Estacional</a>
     <a href="ENSO.html">ENSO</a>
-    <a href="Sugerencias.html">Sugerencias</a>
+    <a href="Contactos.html">Consultas</a>
   </div>
 </div>
 
+<!-- HERO BANNER -->
 <div class="hero"></div>
 
 </body>
