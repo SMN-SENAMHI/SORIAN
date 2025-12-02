@@ -29,9 +29,8 @@ body {
   background: white;
   padding: 12px 20px;
   border-bottom: 1px solid #cfcfcf;
-
   display: flex;
-  justify-content: center;   /* ⭐ CENTRAR EL MENÚ */
+  justify-content: center;
 }
 
 .menu-links {
@@ -44,52 +43,35 @@ body {
   color: #000;
   font-size: 18px;
   font-weight: 500;
+  padding-bottom: 4px;
 }
 
+/* ⭐ EFECTO AL PASAR EL MOUSE */
 .menu-links a:hover {
   border-bottom: 2px solid #000;
 }
 
-/* ------------------------ HERO IMAGE (BANNER COMPLETO) ------------------------ */
+/* ⭐ BOTÓN ACTIVO (PÁGINA ACTUAL) */
+.menu-links a.active {
+  border-bottom: 3px solid #0073ff; /* azul institucional */
+  color: #0073ff;
+  font-weight: 700;
+}
+
+/* ------------------------ HERO IMAGE ------------------------ */
 .hero {
   width: 100%;
   height: 92vh;
   background-image: url("https://raw.githubusercontent.com/SMN-SENAMHI/SORIAN/main/Lista/logo_sudamerica.png");
-
-  /* ⭐ Imagen completa sin recortes laterales */
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   background-color: #001f3f;
-
-  /* Centrar contenido */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-/* ------------------------ TEXTO CENTRAL ------------------------ */
-.main-title {
-  font-size: 50px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 8px black;
-}
-
-.main-subtitle {
-  margin-top: 15px;
-  font-size: 22px;
-  color: white;
-  text-shadow: 2px 2px 8px black;
 }
 
 /* ------------------------ RESPONSIVE ------------------------ */
 @media (max-width: 768px) {
-  .main-title { font-size: 36px; }
-  .main-subtitle { font-size: 18px; }
   .hero { height: 80vh; }
-
   .menu-links {
     gap: 15px;
     font-size: 16px;
@@ -109,7 +91,7 @@ body {
 <!-- MENÚ CENTRADO -->
 <div class="menu-bar">
   <div class="menu-links">
-    <a href="index.html">Inicio</a>
+    <a href="index.html" class="active">Inicio</a>
     <a href="Subestacional.html">Subestacional</a>
     <a href="Estacional.html">Estacional</a>
     <a href="ENSO.html">ENSO</a>
@@ -118,12 +100,7 @@ body {
 </div>
 
 <!-- HERO BANNER -->
-<div class="hero">
-  <div class="main-title">Sistema SORIAN</div>
-  <div class="main-subtitle">
-    Red Integrada de Análisis Operacional Subestacional y Estacional
-  </div>
-</div>
+<div class="hero"></div>
 
 </body>
 </html>
