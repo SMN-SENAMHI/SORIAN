@@ -2,18 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>SORIAN</title>
+<title>Inicio – SORIAN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #ffffff; }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-}
-
-/* ------------------------ BARRA SUPERIOR LOGOS ------------------------ */
+/* LOGOS */
 .top-bar {
   background: white;
   padding: 6px 18px;
@@ -24,10 +20,10 @@ body {
 }
 .top-bar img { height: 45px; }
 
-/* ------------------------ MENÚ CENTRADO ------------------------ */
+/* MENÚ */
 .menu-bar {
   background: white;
-  padding: 12px 20px;
+  padding: 12px;
   border-bottom: 1px solid #cfcfcf;
   display: flex;
   justify-content: center;
@@ -46,43 +42,33 @@ body {
   padding-bottom: 4px;
 }
 
-/* ⭐ EFECTO AL PASAR EL MOUSE */
+/* Hover */
 .menu-links a:hover {
   border-bottom: 2px solid #000;
 }
 
-/* ⭐ BOTÓN ACTIVO (PÁGINA ACTUAL) */
+/* ⭐ ACTIVO */
 .menu-links a.active {
-  border-bottom: 3px solid #0073ff; /* azul institucional */
+  border-bottom: 3px solid #0073ff;
   color: #0073ff;
   font-weight: 700;
 }
 
-/* ------------------------ HERO IMAGE ------------------------ */
-.hero {
-  width: 100%;
-  height: 92vh;
-  background-image: url("https://raw.githubusercontent.com/SMN-SENAMHI/SORIAN/main/Lista/logo_sudamerica.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #001f3f;
-}
-
-/* ------------------------ RESPONSIVE ------------------------ */
-@media (max-width: 768px) {
-  .hero { height: 80vh; }
-  .menu-links {
-    gap: 15px;
-    font-size: 16px;
-  }
+/* CONTENIDO PRINCIPAL */
+.contenido {
+  max-width: 1100px;
+  margin: 50px auto;
+  padding: 20px;
+  color: #222;
+  font-size: 20px;
+  line-height: 1.6;
 }
 </style>
 </head>
 
 <body>
 
-<!-- BARRA SUPERIOR: LOGOS -->
+<!-- BARRA LOGOS -->
 <div class="top-bar">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
@@ -91,16 +77,26 @@ body {
 <!-- MENÚ CENTRADO -->
 <div class="menu-bar">
   <div class="menu-links">
-    <a href="index.html" class="active">Inicio</a>
+    <a href="Inicio.html" class="active">Inicio</a>
     <a href="Subestacional.html">Subestacional</a>
     <a href="Estacional.html">Estacional</a>
     <a href="ENSO.html">ENSO</a>
-    <a href="Contactos.html">Consultas</a>
+    <a href="Sugerencias.html">Sugerencias</a>
   </div>
 </div>
 
-<!-- HERO BANNER -->
-<div class="hero"></div>
+<!-- CONTENIDO -->
+<div class="contenido">
+  <h1>Bienvenido al Sistema SORIAN</h1>
+  <p>
+    Aquí puedes colocar información general, descripción del sistema,
+    enlaces a visores, mapas, paneles o módulos que deseas mostrar.
+  </p>
+  
+  <p>
+    Esta página funciona como tu sección de Inicio, separada de index.html.
+  </p>
+</div>
 
 </body>
 </html>
