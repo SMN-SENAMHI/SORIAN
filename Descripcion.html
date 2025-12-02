@@ -1,15 +1,76 @@
-<div style="max-width:900px;margin:auto;font-size:19px;line-height:1.6;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Descripción – SORIAN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<h1 style="color:#003b6f;font-size:34px;font-weight:800;margin-bottom:5px;">
-SORIAN
-</h1>
+<style>
+body {
+  background: #001f3f;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-<h2 style="color:#003b6f;font-size:24px;margin-bottom:20px;">
-Seasonal and Subseasonal Operational Regional Integrated Analysis of Global and Regional Models Network
-</h2>
+/* Caja blanca del contenido */
+.content-box {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: white;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+  font-size: 19px;
+  line-height: 1.65;
+}
+
+/* Títulos */
+h1 {
+  color: #003b6f;
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+h2 {
+  color: #003b6f;
+  font-size: 24px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+th {
+  background: #004b8d;
+  color: white;
+  padding: 8px;
+  text-align: left;
+}
+
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="content-box">
+
+<h1>SORIAN</h1>
+
+<h2>Seasonal and Subseasonal Operational Regional Integrated Analysis of Global and Regional Models Network</h2>
 
 <!-- DESCRIPCIÓN -->
-<b> Descripción</b><br><br>
+<b>Descripción</b><br><br>
 
 SORIAN es una plataforma integrada diseñada para consolidar, analizar y visualizar la información más reciente disponible en predicción semanal, mensual y estacional, combinando componentes atmosféricos y oceánicos.<br><br>
 
@@ -19,13 +80,15 @@ Esta iniciativa surge ante la creciente disponibilidad de modelos y productos de
 <br><br>
 
 <!-- MODELOS GLOBALES -->
-<h2 style="color:#003b6f;"> Modelos Globales</h2>
+<h2>Modelos Globales</h2>
 
 SORIAN integra de forma operativa los principales modelos globales utilizados para predicción subseasonal y estacional:<br><br>
 
-<table style="width:100%;border-collapse:collapse;font-size:17px;">
-<tr><th style="background:#004b8d;color:white;padding:8px;text-align:left;">Modelo</th>
-    <th style="background:#004b8d;color:white;padding:8px;text-align:left;">Institución / País</th></tr>
+<table>
+<tr>
+<th>Modelo</th>
+<th>Institución / País</th>
+</tr>
 
 <tr><td>BOM</td><td>Bureau of Meteorology – Australia</td></tr>
 <tr><td>ECMWF – SEAS5 / S2S</td><td>European Centre for Medium-Range Weather Forecasts – Europa</td></tr>
@@ -47,42 +110,39 @@ SORIAN integra de forma operativa los principales modelos globales utilizados pa
 <tr><td>KMA_GLOSEA6GC3.2</td><td>Corea del Sur</td></tr>
 <tr><td>MGO_MGOAM2.4</td><td>Rusia</td></tr>
 <tr><td>PNU-RDA_CGCMv2.0</td><td>Pusan University – Corea del Sur</td></tr>
-
 </table>
 
-<br>
 Estos modelos aportan información esencial sobre dinámica atmosférica, TSM, circulación oceánica, ENSO, MJO, anomalías de viento, presión, precipitación y otros indicadores clave.
 <br><br>
 
 <!-- MODELOS REGIONALES -->
-<h2 style="color:#003b6f;"> Modelos Regionales</h2>
+<h2>Modelos Regionales</h2>
 
-SORIAN incorpora también predicciones regionales de alta resolución (1–10 km), generadas con:
+SORIAN incorpora también predicciones regionales de alta resolución (1–10 km), generadas mediante:
 
 <ul>
 <li>WRF – Weather Research and Forecasting Model</li>
-<li>Modelos dinámicos regionales forzados por CFSv2, ECMWF, GEFS</li>
-<li>Ensambles de 32 perturbaciones para estimar incertidumbre</li>
+<li>Downscaling dinámico forzado por CFSv2, ECMWF y GEFS</li>
+<li>Ensambles de 32 perturbaciones para evaluar incertidumbre e intraestacionalidad</li>
 </ul>
 
-<b>Referencias científicas:</b><br><br>
+<b>Referencias científicas utilizadas en la configuración WRF:</b><br><br>
 
-• Llacza Rodríguez, A., Paredes, J., Llamocca, J., Saavedra, M., Fita, L., Ruiz, C., & Junquas, C. (2025).  
-<i> Improved spatial representation of precipitation and air surface temperature over highlands of the southern tropical Andes (Lake Titicaca region) during an austral summer using the WRF model.</i>  
+• <b>Llacza Rodríguez, A., Paredes, J., Llamocca, J., Saavedra, M., Fita, L., Ruiz, C., & Junquas, C. (2025).</b><br>
+<i>Improved spatial representation of precipitation and air surface temperature over highlands of the southern tropical Andes (Lake Titicaca region) during an austral summer using the WRF model.</i><br>
 https://doi.org/10.1016/j.atmosres.2025.108262  
-<br><br>
-
-• Dominguez et al. (2024).  
-<i>Advancing South American water and climate science through multidecadal convection-permitting modeling.</i>  
-https://doi.org/10.1175/BAMS-D-22-0226.1  
-<br><br>
-
-Estos productos permiten analizar precipitación, temperatura, viento y extremos climáticos locales.
-
 <br>
 
+• <b>Dominguez, F., Rasmussen, R., Liu, C., Ikeda, K., Prein, A., Varble, A., Arias, P. A., et al. (2024).</b><br>
+<i>Advancing South American water and climate science through multidecadal convection-permitting modeling. </i><br>  
+https://doi.org/10.1175/BAMS-D-22-0226.1  
+<br>
+
+Estos estudios sustentan la selección de microfísica, PBL, parametrización de convección y esquemas de superficie, mejorando la representación de precipitación, temperatura, viento y extremos climáticos en zonas altoandinas y costeras.
+<br><br>
+
 <!-- SUBESTACIONAL -->
-<h2 style="color:#003b6f;"> Visor Subestacional</h2>
+<h2>Visor Subestacional</h2>
 Incluye:
 <ul>
 <li>Predicciones semanales de precipitación</li>
@@ -90,7 +150,7 @@ Incluye:
 </ul>
 
 <!-- ESTACIONAL -->
-<h2 style="color:#003b6f;"> Visor Estacional</h2>
+<h2>Visor Estacional</h2>
 Incluye:
 <ul>
 <li>Pronósticos mensuales multimodelo</li>
@@ -101,7 +161,7 @@ Incluye:
 </ul>
 
 <!-- ENSO -->
-<h2 style="color:#003b6f;"> Visor ENSO – Niño/Niña</h2>
+<h2>Visor ENSO – Niño/Niña</h2>
 Incluye:
 <ul>
 <li>Evolución observada y pronosticada de TSM</li>
@@ -110,13 +170,16 @@ Incluye:
 <li>Tendencias Niño 1+2 y Niño 3.4</li>
 </ul>
 
-<br>
+<br><br>
 
 <div style="text-align:center;color:#444;font-size:16px;">
 <b>¡Importante!</b><br>
-Los resultados son referenciales y pueden contener incertidumbre.  
-El SENAMHI no se responsabiliza por un uso inadecuado.<br><br>
+Los resultados mostrados son referenciales y pueden contener incertidumbre.  
+El SENAMHI no se responsabiliza por un uso inadecuado de esta información.<br><br>
 Lima – Perú
 </div>
 
 </div>
+
+</body>
+</html>
