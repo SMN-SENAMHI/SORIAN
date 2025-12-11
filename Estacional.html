@@ -58,7 +58,13 @@
         width:100%;
         height:750px;
     ">
-        <iframe id="visor_estacional" width="100%" height="100%" style="border:none;"></iframe>
+        <!-- ⚠️ INICIALIZACIÓN NECESARIA PARA QUE CARGUE CORRECTAMENTE -->
+        <iframe id="visor_estacional" 
+                width="100%" 
+                height="100%" 
+                style="border:none;"
+                src="visor_ecmwf_tpara.html">
+        </iframe>
     </div>
 
 </div>
@@ -68,7 +74,8 @@ function cargarVisor() {
     let modelo = document.getElementById("modelo").value;
     let variable = document.getElementById("variable").value;
 
-    let archivo = `./visor_${modelo}_${variable}.html`;
+    // Construcción dinámica, coincide EXACTAMENTE con tus archivos en GitHub
+    let archivo = `visor_${modelo}_${variable}.html`;
 
     document.getElementById("visor_estacional").src = archivo;
 }
