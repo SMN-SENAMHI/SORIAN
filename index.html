@@ -71,13 +71,14 @@ body {
 /* ------------------------ CONTENIDO DINÁMICO ------------------------ */
 #content {
   display: none;
-  max-width: 1000px;
+  max-width: 1000px;  /* se expandirá dinámicamente para Estacional */
   margin: 40px auto;
   padding: 40px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   min-height: 70vh;
+  transition: 0.3s ease-in-out;
 }
 
 /* ------------------------ RESPONSIVE ------------------------ */
@@ -115,11 +116,13 @@ body {
 <div id="content"></div>
 
 <script>
+/* ------------------------ Funciones de navegación ------------------------ */
 function clearActive() {
   document.querySelectorAll('.menu-links a').forEach(a => a.classList.remove('active'));
 }
 
 function showSection(section) {
+
   clearActive();
   document.getElementById("btn-" + section).classList.add("active");
 
@@ -129,28 +132,38 @@ function showSection(section) {
   if (section === "home") {
     hero.style.display    = "block";
     content.style.display = "none";
-    content.innerHTML     = "";
+
+    /* Restaurar estilo estándar */
+    content.style.maxWidth = "1000px";
+    content.style.padding  = "40px";
+    content.innerHTML = "";
     return;
   }
 
   hero.style.display    = "none";
   content.style.display = "block";
 
-  const fileName = section.charAt(0).toUpperCase() + section.slice(1) + ".html";
+  /* ⭐ EXPANSIÓN ESPECIAL PARA ESTACIONAL */
+  if (section === "estacional") {
+    content.style.maxWidth = "95%";  /* 🔥 casi pantalla completa */
+    content.style.padding  = "10px"; /* 🔥 margen reducido */
+  } else {
+    content.style.maxWidth = "1000px";
+    content.style.padding  = "40px";
+  }
 
-  fetch(fileName)
+  /* Cargar archivo HTML correspondiente */
+  fetch(section.charAt(0).toUpperCase() + section.slice(1) + ".html")
     .then(response => response.text())
     .then(data => {
       content.innerHTML = data;
 
-      // Después de insertar el HTML, inicializar lógica especial de Estacional
-      if (section === "estacional") {
-        initEstacional();
-      }
+      /* Inicializar lógica del visor estacional */
+      if (section === "estacional") initEstacional();
     });
 }
 
-/* ===== LÓGICA DEL VISOR ESTACIONAL ===== */
+/* ------------------------ Lógica del visor estacional ------------------------ */
 function initEstacional() {
   const modeloSelect   = document.getElementById("modelo");
   const variableSelect = document.getElementById("variable");
@@ -158,21 +171,21 @@ function initEstacional() {
   const btnCargar      = document.getElementById("btnCargarVisor");
 
   if (!modeloSelect || !variableSelect || !visorIframe || !btnCargar) {
-    console.warn("Elementos de Estacional no encontrados.");
+    console.warn("⚠ Elementos del visor estacional no encontrados.");
     return;
   }
 
   function cargarVisor() {
-    const modelo   = modeloSelect.value;    // ecmwf, bom, ncep
-    const variable = variableSelect.value;  // tpara, mx2t24a, mn2t24a
+    const modelo   = modeloSelect.value;
+    const variable = variableSelect.value;
     const archivo  = `visor_${modelo}_${variable}.html`;
-    visorIframe.src = archivo;
+
+    visorIframe.src = archivo;  /* carga del visor */
   }
 
-  // Asignar evento al botón
   btnCargar.addEventListener("click", cargarVisor);
 
-  // Cargar combinación inicial por defecto
+  /* Carga inicial */
   cargarVisor();
 }
 </script>
