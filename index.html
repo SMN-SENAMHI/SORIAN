@@ -13,7 +13,7 @@ body {
   background: #e9eef3;
 }
 
-/* ------------------------ BARRA SUPERIOR ------------------------ */
+/* ------------------------ BARRA SUPERIOR LOGOS ------------------------ */
 .top-bar {
   background: white;
   padding: 6px 18px;
@@ -24,7 +24,7 @@ body {
 }
 .top-bar img { height: 45px; }
 
-/* ------------------------ MENÚ ------------------------ */
+/* ------------------------ MENÚ CENTRADO ------------------------ */
 .menu-bar {
   background: white;
   padding: 12px 20px;
@@ -43,17 +43,21 @@ body {
   color: #000;
   font-size: 18px;
   font-weight: 500;
+  padding-bottom: 4px;
   cursor: pointer;
-  padding-bottom: 3px;
+}
+
+.menu-links a:hover {
+  border-bottom: 2px solid #000;
 }
 
 .menu-links a.active {
   border-bottom: 3px solid #0073ff;
-  font-weight: 700;
   color: #0073ff;
+  font-weight: 700;
 }
 
-/* ------------------------ PORTADA ------------------------ */
+/* ------------------------ HERO IMAGE (Inicio) ------------------------ */
 #hero {
   width: 100%;
   height: 92vh;
@@ -64,27 +68,25 @@ body {
   background-color: #001f3f;
 }
 
-/* ------------------------ CONTENIDO ------------------------ */
+/* ------------------------ CONTENIDO DINÁMICO ------------------------ */
 #content {
   display: none;
-  max-width: 1100px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 40px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   min-height: 70vh;
-  overflow-x: auto;
 }
 
-/* Evitar que contenido interno afecte layout */
-#content * {
-  max-width: 100%;
+/* ------------------------ RESPONSIVE ------------------------ */
+@media (max-width: 768px) {
+  #hero { height: 70vh; }
+  .menu-links { gap: 15px; font-size: 16px; }
 }
-
 </style>
 </head>
-
 
 <body>
 
@@ -106,44 +108,36 @@ body {
   </div>
 </div>
 
-<!-- PORTADA -->
+<!-- PORTADA INICIO -->
 <div id="hero"></div>
 
-<!-- CONTENIDO -->
+<!-- CONTENIDO DINÁMICO -->
 <div id="content"></div>
-
 
 <script>
 function clearActive() {
-  document.querySelectorAll(".menu-links a").forEach(a =>
-    a.classList.remove("active")
-  );
+  document.querySelectorAll('.menu-links a').forEach(a => a.classList.remove('active'));
 }
 
 function showSection(section) {
+
   clearActive();
   document.getElementById("btn-" + section).classList.add("active");
 
   if (section === "home") {
     document.getElementById("hero").style.display = "block";
     document.getElementById("content").style.display = "none";
+    document.getElementById("content").innerHTML = "";
     return;
   }
 
   document.getElementById("hero").style.display = "none";
   document.getElementById("content").style.display = "block";
 
-  const file = section + ".html";
-
-  fetch(file)
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById("content").innerHTML = html;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    })
-    .catch(() => {
-      document.getElementById("content").innerHTML =
-        "<p style='color:red'>No se encontró el archivo " + file + "</p>";
+  fetch(section.charAt(0).toUpperCase() + section.slice(1) + ".html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("content").innerHTML = data;
     });
 }
 </script>
