@@ -1,127 +1,75 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Visor Climático — Dashboard</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: linear-gradient(180deg, #f9f9f9, #e5e5e5);
-}
-#panel {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 260px;
-    background: #ffffffd9;
-    padding: 18px;
+<div style="
+    padding: 20px;
+    background: white;
     border-radius: 12px;
-    border: 1px solid #d9d9d9;
-    backdrop-filter: blur(4px);
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-}
-#panelTitle {
-    font-size: 17px;
-    font-weight: 600;
-    color: #222;
-    margin-bottom: 12px;
-}
-label {
-    font-size: 14px;
-    color: #222;
-    font-weight: 600;
-}
-select {
-    width: 100%;
-    padding: 8px 6px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #bbb;
-    background: #fafafa;
-}
-button {
-    width: 100%;
-    padding: 10px;
-    background: #0077CC;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
-    transition: 0.2s;
-}
-button:hover {
-    background: #005fa3;
-}
-.note {
-    font-size: 12px;
-    color: #444;
-    margin-top: 8px;
-}
-#visorFrame {
-    position: absolute;
-    top: 0;
-    left: 310px;
-    width: calc(100% - 310px);
-    height: 100vh;
-    border: none;
-    background: #ffffff;
-    border-left: 1px solid #ccc;
-}
-</style>
-</head>
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+">
 
-<body>
+    <h2 style="margin-bottom: 15px;">Visor Climático — C3S</h2>
 
-<div id="panel">
-    <div id="panelTitle">Visor Climático — C3S</div>
+    <p style="margin-bottom: 20px;">
+        Seleccione un modelo y una variable para visualizar el pronóstico estacional.<br>
+        <small>* Mes y animación se controlan dentro del visor cargado.</small>
+    </p>
 
-    <label>Modelo</label>
-    <select id="modelo">
-        <option value="ecmwf">ECMWF</option>
-        <option value="bom">BOM</option>
-        <option value="ncep">NCEP</option>
-    </select>
+    <!-- PANEL DE SELECCIÓN -->
+    <div style="
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #fafafa;
+        margin-bottom: 20px;
+    ">
+        <label style="font-weight:600;">Modelo</label><br>
+        <select id="modelo" style="padding:7px; width:200px; margin-bottom:10px;">
+            <option value="ecmwf">ECMWF</option>
+            <option value="bom">BOM</option>
+            <option value="ncep">NCEP</option>
+        </select>
+        <br>
 
-    <label>Variable</label>
-    <select id="variable">
-        <option value="tpara">Precipitación</option>
-        <option value="mx2t24a">Temp Máxima</option>
-        <option value="mn2t24a">Temp Mínima</option>
-    </select>
+        <label style="font-weight:600;">Variable</label><br>
+        <select id="variable" style="padding:7px; width:200px; margin-bottom:10px;">
+            <option value="tpara">Precipitación</option>
+            <option value="mx2t24a">Temp Máxima</option>
+            <option value="mn2t24a">Temp Mínima</option>
+        </select>
+        <br>
 
-    <button onclick="cargarVisor()">Cargar visor</button>
-
-    <div class="note">
-        * Mes y animación se controlan dentro del visor cargado.
+        <button onclick="cargarVisor()" 
+        style="
+            padding: 8px 15px;
+            background:#0077CC;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            font-weight:600;
+        ">
+            Cargar visor
+        </button>
     </div>
-</div>
 
-<iframe id="visorFrame" src="./visor_ecmwf_tpara.html"></iframe>
+    <!-- VISOR INTEGRADO -->
+    <div style="
+        border: 1px solid #ccc;
+        border-radius:10px;
+        overflow:hidden;
+        width:100%;
+        height:750px;
+    ">
+        <iframe id="visor_estacional" width="100%" height="100%" style="border:none;"></iframe>
+    </div>
+
+</div>
 
 <script>
 function cargarVisor() {
-    let m = document.getElementById("modelo").value;
-    let v = document.getElementById("variable").value;
-    document.getElementById("visorFrame").src = `visor_${m}_${v}.html`;
-}
-document.getElementById("visorFrame").onload = function () {
-    let doc = this.contentWindow.document;
-    let css = doc.createElement("style");
-    css.innerHTML = `
-        [id^='btnModel_'], [id^='btnVar_'] { display:none !important; }
-        #tituloModelo, #tituloVariable { display:none !important; }
-    `;
-    doc.head.appendChild(css);
-};
-</script>
+    let modelo = document.getElementById("modelo").value;
+    let variable = document.getElementById("variable").value;
 
-</body>
-</html>
+    let archivo = `visor_${modelo}_${variable}.html`;
+
+    document.getElementById("visor_estacional").src = archivo;
+}
+</script>
