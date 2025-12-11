@@ -12,6 +12,7 @@
         <small>* Mes y animación se controlan dentro del visor cargado.</small>
     </p>
 
+    <!-- PANEL DE SELECCIÓN -->
     <div style="
         padding: 15px;
         border: 1px solid #ddd;
@@ -49,6 +50,7 @@
         </button>
     </div>
 
+    <!-- VISOR -->
     <div style="
         border: 1px solid #ccc;
         border-radius:10px;
@@ -61,15 +63,16 @@
                 height="100%" 
                 style="border:none;"
                 loading="eager"
-                src="./visor_ecmwf_tpara.html">
+                src="visor_ecmwf_tpara.html?v=init">
         </iframe>
     </div>
 
 </div>
 
 <script>
+// Asegura que el iframe se recargue correctamente al cargar la sección
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("visor_estacional").src = "visor_ecmwf_tpara.html";
+    document.getElementById("visor_estacional").src = "visor_ecmwf_tpara.html?v=" + Date.now();
 });
 
 function cargarVisor() {
@@ -77,6 +80,8 @@ function cargarVisor() {
     let variable = document.getElementById("variable").value;
 
     let archivo = `visor_${modelo}_${variable}.html`;
-    document.getElementById("visor_estacional").src = archivo;
+
+    // Evita cache y asegura recarga REAL del visor
+    document.getElementById("visor_estacional").src = archivo + "?v=" + Date.now();
 }
 </script>
