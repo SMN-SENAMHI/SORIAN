@@ -92,8 +92,8 @@ body {
 
 <!-- BARRA SUPERIOR -->
 <div class="top-bar">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
+  <img src="https://raw.githubusercontentusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
+  <img src="https://raw.githubusercontentusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
 </div>
 
 <!-- MENÚ -->
@@ -115,12 +115,13 @@ body {
 <div id="content"></div>
 
 <script>
+// Limpia el estado activo del menú
 function clearActive() {
   document.querySelectorAll('.menu-links a').forEach(a => a.classList.remove('active'));
 }
 
+// Función principal para mostrar secciones
 function showSection(section) {
-
   clearActive();
   document.getElementById("btn-" + section).classList.add("active");
 
@@ -134,10 +135,35 @@ function showSection(section) {
   document.getElementById("hero").style.display = "none";
   document.getElementById("content").style.display = "block";
 
-  fetch(section.charAt(0).toUpperCase() + section.slice(1) + ".html")
-    .then(response => response.text())
+  // Rutas robustas: prueban varias combinaciones de nombre del archivo
+  const possibleFiles = [
+    section.toLowerCase() + ".html",
+    section.charAt(0).toUpperCase() + section.slice(1) + ".html",
+    section.toUpperCase() + ".html"
+  ];
+
+  // Intentar cargar el archivo correcto
+  loadSectionFile(possibleFiles, 0);
+}
+
+// Intentar cargar archivos en orden hasta que uno funcione
+function loadSectionFile(files, index) {
+  if (index >= files.length) {
+    document.getElementById("content").innerHTML =
+      "<p style='color:red; font-size:18px;'>❌ No se encontró el archivo de esta sección.</p>";
+    return;
+  }
+
+  fetch(files[index])
+    .then(response => {
+      if (!response.ok) throw new Error("No encontrado");
+      return response.text();
+    })
     .then(data => {
       document.getElementById("content").innerHTML = data;
+    })
+    .catch(() => {
+      loadSectionFile(files, index + 1);  // Intentar el siguiente archivo
     });
 }
 </script>
