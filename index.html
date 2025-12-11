@@ -44,11 +44,13 @@ body {
   font-size: 18px;
   font-weight: 500;
   cursor: pointer;
+  padding-bottom: 3px;
 }
 
 .menu-links a.active {
-  font-weight: 700;
   border-bottom: 3px solid #0073ff;
+  font-weight: 700;
+  color: #0073ff;
 }
 
 /* ------------------------ PORTADA ------------------------ */
@@ -62,10 +64,10 @@ body {
   background-color: #001f3f;
 }
 
-/* ------------------------ CONTENEDOR ------------------------ */
+/* ------------------------ CONTENIDO ------------------------ */
 #content {
   display: none;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 40px auto;
   padding: 40px;
   background: white;
@@ -75,10 +77,11 @@ body {
   overflow-x: auto;
 }
 
-/* impide que contenido interno se vuelva full screen */
+/* Evitar que contenido interno afecte layout */
 #content * {
   max-width: 100%;
 }
+
 </style>
 </head>
 
@@ -112,7 +115,9 @@ body {
 
 <script>
 function clearActive() {
-  document.querySelectorAll(".menu-links a").forEach(a => a.classList.remove("active"));
+  document.querySelectorAll(".menu-links a").forEach(a =>
+    a.classList.remove("active")
+  );
 }
 
 function showSection(section) {
@@ -128,12 +133,13 @@ function showSection(section) {
   document.getElementById("hero").style.display = "none";
   document.getElementById("content").style.display = "block";
 
-  let file = section + ".html";
+  const file = section + ".html";
 
   fetch(file)
     .then(r => r.text())
     .then(html => {
       document.getElementById("content").innerHTML = html;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     })
     .catch(() => {
       document.getElementById("content").innerHTML =
