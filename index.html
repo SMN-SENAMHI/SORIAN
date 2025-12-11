@@ -43,18 +43,12 @@ body {
   color: #000;
   font-size: 18px;
   font-weight: 500;
-  padding-bottom: 4px;
   cursor: pointer;
 }
 
-.menu-links a:hover {
-  border-bottom: 2px solid #000;
-}
-
 .menu-links a.active {
-  border-bottom: 3px solid #0073ff;
-  color: #0073ff;
   font-weight: 700;
+  border-bottom: 3px solid #0073ff;
 }
 
 /* ------------------------ PORTADA ------------------------ */
@@ -68,7 +62,7 @@ body {
   background-color: #001f3f;
 }
 
-/* ------------------------ CONTENIDO ------------------------ */
+/* ------------------------ CONTENEDOR ------------------------ */
 #content {
   display: none;
   max-width: 1000px;
@@ -79,6 +73,11 @@ body {
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   min-height: 70vh;
   overflow-x: auto;
+}
+
+/* impide que contenido interno se vuelva full screen */
+#content * {
+  max-width: 100%;
 }
 </style>
 </head>
@@ -110,22 +109,10 @@ body {
 <!-- CONTENIDO -->
 <div id="content"></div>
 
+
 <script>
 function clearActive() {
-  document.querySelectorAll('.menu-links a').forEach(a =>
-    a.classList.remove('active')
-  );
-}
-
-// Limpia etiquetas peligrosas de secciones internas
-function sanitize(html) {
-  return html
-    .replace(/<!DOCTYPE[^>]*>/gi, "")
-    .replace(/<html[^>]*>/gi, "")
-    .replace(/<\/html>/gi, "")
-    .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, "")
-    .replace(/<body[^>]*>/gi, "")
-    .replace(/<\/body>/gi, "");
+  document.querySelectorAll(".menu-links a").forEach(a => a.classList.remove("active"));
 }
 
 function showSection(section) {
@@ -135,38 +122,23 @@ function showSection(section) {
   if (section === "home") {
     document.getElementById("hero").style.display = "block";
     document.getElementById("content").style.display = "none";
-    document.getElementById("content").innerHTML = "";
     return;
   }
 
   document.getElementById("hero").style.display = "none";
   document.getElementById("content").style.display = "block";
 
-  const files = [
-    section + ".html",
-    section.toLowerCase() + ".html",
-    section.charAt(0).toUpperCase() + section.slice(1) + ".html"
-  ];
+  let file = section + ".html";
 
-  loadHTML(files, 0);
-}
-
-function loadHTML(files, idx) {
-  if (idx >= files.length) {
-    document.getElementById("content").innerHTML =
-      "<p style='color:red'>Archivo no encontrado.</p>";
-    return;
-  }
-
-  fetch(files[idx])
-    .then(r => {
-      if (!r.ok) throw 0;
-      return r.text();
+  fetch(file)
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById("content").innerHTML = html;
     })
-    .then(text => {
-      document.getElementById("content").innerHTML = sanitize(text);
-    })
-    .catch(() => loadHTML(files, idx + 1));
+    .catch(() => {
+      document.getElementById("content").innerHTML =
+        "<p style='color:red'>No se encontró el archivo " + file + "</p>";
+    });
 }
 </script>
 
