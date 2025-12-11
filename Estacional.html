@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Visor Climático — Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, #f9f9f9, #e5e5e5);
+}
+#panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 260px;
+    background: #ffffffd9;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #d9d9d9;
+    backdrop-filter: blur(4px);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+}
+#panelTitle {
+    font-size: 17px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 12px;
+}
+label {
+    font-size: 14px;
+    color: #222;
+    font-weight: 600;
+}
+select {
+    width: 100%;
+    padding: 8px 6px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    background: #fafafa;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background: #0077CC;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+button:hover {
+    background: #005fa3;
+}
+.note {
+    font-size: 12px;
+    color: #444;
+    margin-top: 8px;
+}
+#visorFrame {
+    position: absolute;
+    top: 0;
+    left: 310px;
+    width: calc(100% - 310px);
+    height: 100vh;
+    border: none;
+    background: #ffffff;
+    border-left: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<div id="panel">
+    <div id="panelTitle">Visor Climático — C3S</div>
+
+    <label>Modelo</label>
+    <select id="modelo">
+        <option value="ecmwf">ECMWF</option>
+        <option value="bom">BOM</option>
+        <option value="ncep">NCEP</option>
+    </select>
+
+    <label>Variable</label>
+    <select id="variable">
+        <option value="tpara">Precipitación</option>
+        <option value="mx2t24a">Temp Máxima</option>
+        <option value="mn2t24a">Temp Mínima</option>
+    </select>
+
+    <button onclick="cargarVisor()">Cargar visor</button>
+
+    <div class="note">
+        * Mes y animación se controlan dentro del visor cargado.
+    </div>
+</div>
+
+<iframe id="visorFrame" src="visor_ecmwf_tpara.html"></iframe>
+
+<script>
+function cargarVisor() {
+    let m = document.getElementById("modelo").value;
+    let v = document.getElementById("variable").value;
+    document.getElementById("visorFrame").src = `visor_${m}_${v}.html`;
+}
+document.getElementById("visorFrame").onload = function () {
+    let doc = this.contentWindow.document;
+    let css = doc.createElement("style");
+    css.innerHTML = `
+        [id^='btnModel_'], [id^='btnVar_'] { display:none !important; }
+        #tituloModelo, #tituloVariable { display:none !important; }
+    `;
+    doc.head.appendChild(css);
+};
+</script>
+
+</body>
+</html>
