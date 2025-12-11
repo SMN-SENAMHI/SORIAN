@@ -36,7 +36,7 @@
         </select>
         <br>
 
-        <button onclick="cargarVisor()" 
+        <button id="btnCargarVisor"
         style="
             padding: 8px 15px;
             background:#0077CC;
@@ -50,7 +50,7 @@
         </button>
     </div>
 
-    <!-- VISOR -->
+    <!-- VISOR INTEGRADO -->
     <div style="
         border: 1px solid #ccc;
         border-radius:10px;
@@ -58,30 +58,8 @@
         width:100%;
         height:750px;
     ">
-        <iframe id="visor_estacional" 
-                width="100%" 
-                height="100%" 
-                style="border:none;"
-                loading="eager"
-                src="visor_ecmwf_tpara.html?v=init">
-        </iframe>
+        <!-- se cargará vía JS desde index.html -->
+        <iframe id="visor_estacional" width="100%" height="100%" style="border:none;"></iframe>
     </div>
 
 </div>
-
-<script>
-// Asegura que el iframe se recargue correctamente al cargar la sección
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("visor_estacional").src = "visor_ecmwf_tpara.html?v=" + Date.now();
-});
-
-function cargarVisor() {
-    let modelo = document.getElementById("modelo").value;
-    let variable = document.getElementById("variable").value;
-
-    let archivo = `visor_${modelo}_${variable}.html`;
-
-    // Evita cache y asegura recarga REAL del visor
-    document.getElementById("visor_estacional").src = archivo + "?v=" + Date.now();
-}
-</script>
