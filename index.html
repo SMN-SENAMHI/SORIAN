@@ -120,25 +120,60 @@ function clearActive() {
 }
 
 function showSection(section) {
-
   clearActive();
   document.getElementById("btn-" + section).classList.add("active");
 
+  const hero    = document.getElementById("hero");
+  const content = document.getElementById("content");
+
   if (section === "home") {
-    document.getElementById("hero").style.display = "block";
-    document.getElementById("content").style.display = "none";
-    document.getElementById("content").innerHTML = "";
+    hero.style.display    = "block";
+    content.style.display = "none";
+    content.innerHTML     = "";
     return;
   }
 
-  document.getElementById("hero").style.display = "none";
-  document.getElementById("content").style.display = "block";
+  hero.style.display    = "none";
+  content.style.display = "block";
 
-  fetch(section.charAt(0).toUpperCase() + section.slice(1) + ".html")
+  const fileName = section.charAt(0).toUpperCase() + section.slice(1) + ".html";
+
+  fetch(fileName)
     .then(response => response.text())
     .then(data => {
-      document.getElementById("content").innerHTML = data;
+      content.innerHTML = data;
+
+      // Después de insertar el HTML, inicializar lógica especial de Estacional
+      if (section === "estacional") {
+        initEstacional();
+      }
     });
+}
+
+/* ===== LÓGICA DEL VISOR ESTACIONAL ===== */
+function initEstacional() {
+  const modeloSelect   = document.getElementById("modelo");
+  const variableSelect = document.getElementById("variable");
+  const visorIframe    = document.getElementById("visor_estacional");
+  const btnCargar      = document.getElementById("btnCargarVisor");
+
+  if (!modeloSelect || !variableSelect || !visorIframe || !btnCargar) {
+    console.warn("Elementos de Estacional no encontrados.");
+    return;
+  }
+
+  function cargarVisor() {
+    const modelo   = modeloSelect.value;    // ecmwf, bom, ncep
+    const variable = variableSelect.value;  // tpara, mx2t24a, mn2t24a
+    const archivo  = `visor_${modelo}_${variable}.html`;
+    visorIframe.src = archivo;
+  }
+
+  // Asignar evento al botón
+  btnCargar.addEventListener("click", cargarVisor);
+
+  // Cargar combinación inicial por defecto
+  cargarVisor();
 }
 </script>
 
