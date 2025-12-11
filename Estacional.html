@@ -1,9 +1,70 @@
-<div style="
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<style>
+/* --- PANEL ─────────────────────────────────────────────── */
+#panel-estacional {
     padding: 20px;
-    background: white;
+    background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-">
+    margin-bottom: 20px;
+}
+
+/* Etiquetas */
+#panel-estacional label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Selectores */
+#panel-estacional select {
+    padding: 7px;
+    width: 220px;
+    margin-bottom: 10px;
+}
+
+/* Botón */
+#btnCargarVisor {
+    padding: 8px 15px;
+    background: #0077CC;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+#btnCargarVisor:hover {
+    background: #005fa3;
+}
+
+/* --- VISOR EXPANDIDO ───────────────────────────────────── */
+#visor-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 260px); /* 🔥 Visor grande dinámico */
+    margin: 0;
+    padding: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+#visor_estacional {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="panel-estacional">
 
     <h2 style="margin-bottom: 15px;">Visor Climático — C3S</h2>
 
@@ -12,54 +73,30 @@
         <small>* Mes y animación se controlan dentro del visor cargado.</small>
     </p>
 
-    <!-- PANEL DE SELECCIÓN -->
-    <div style="
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        background: #fafafa;
-        margin-bottom: 20px;
-    ">
-        <label style="font-weight:600;">Modelo</label><br>
-        <select id="modelo" style="padding:7px; width:200px; margin-bottom:10px;">
-            <option value="ecmwf">ECMWF</option>
-            <option value="bom">BOM</option>
-            <option value="ncep">NCEP</option>
-        </select>
-        <br>
+    <label>Modelo</label>
+    <select id="modelo">
+        <option value="ecmwf">ECMWF</option>
+        <option value="bom">BOM</option>
+        <option value="ncep">NCEP</option>
+    </select>
 
-        <label style="font-weight:600;">Variable</label><br>
-        <select id="variable" style="padding:7px; width:200px; margin-bottom:10px;">
-            <option value="tpara">Precipitación</option>
-            <option value="mx2t24a">Temp Máxima</option>
-            <option value="mn2t24a">Temp Mínima</option>
-        </select>
-        <br>
+    <label>Variable</label>
+    <select id="variable">
+        <option value="tpara">Precipitación</option>
+        <option value="mx2t24a">Temp Máxima</option>
+        <option value="mn2t24a">Temp Mínima</option>
+    </select>
 
-        <button id="btnCargarVisor"
-        style="
-            padding: 8px 15px;
-            background:#0077CC;
-            color:white;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-            font-weight:600;
-        ">
-            Cargar visor
-        </button>
-    </div>
+    <br>
 
-    <!-- VISOR INTEGRADO -->
-    <div style="
-        border: 1px solid #ccc;
-        border-radius:10px;
-        overflow:hidden;
-        width:100%;
-        height:750px;
-    ">
-        <!-- se cargará vía JS desde index.html -->
-        <iframe id="visor_estacional" width="100%" height="100%" style="border:none;"></iframe>
-    </div>
+    <button id="btnCargarVisor">Cargar visor</button>
 
 </div>
+
+<!-- VISOR FULLSCREEN DENTRO DEL CONTENEDOR -->
+<div id="visor-container">
+    <iframe id="visor_estacional"></iframe>
+</div>
+
+</body>
+</html>
