@@ -12,7 +12,6 @@
         <small>* Mes y animación se controlan dentro del visor cargado.</small>
     </p>
 
-    <!-- PANEL DE SELECCIÓN -->
     <div style="
         padding: 15px;
         border: 1px solid #ddd;
@@ -50,7 +49,6 @@
         </button>
     </div>
 
-    <!-- VISOR INTEGRADO -->
     <div style="
         border: 1px solid #ccc;
         border-radius:10px;
@@ -58,23 +56,25 @@
         width:100%;
         height:750px;
     ">
-        <!-- ⚠️ INICIALIZACIÓN NECESARIA PARA QUE CARGUE CORRECTAMENTE -->
         <iframe id="visor_estacional" 
                 width="100%" 
                 height="100%" 
                 style="border:none;"
-                src="visor_ecmwf_tpara.html">
+                loading="eager"
+                src="./visor_ecmwf_tpara.html">
         </iframe>
     </div>
 
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("visor_estacional").src = "visor_ecmwf_tpara.html";
+});
+
 function cargarVisor() {
     let modelo = document.getElementById("modelo").value;
     let variable = document.getElementById("variable").value;
-
-    // Construcción dinámica, coincide EXACTAMENTE con tus archivos en GitHub
     let archivo = `visor_${modelo}_${variable}.html`;
 
     document.getElementById("visor_estacional").src = archivo;
