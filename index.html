@@ -154,7 +154,7 @@ function showSection(section) {
      ========================= */
   let archivo = section.charAt(0).toUpperCase() + section.slice(1) + ".html";
 
-  if (section === "enso") archivo = "ENSO.html";
+  if (section === "enso") archivo = "Enso.html";
 
   fetch(archivo)
     .then(r => r.text())
