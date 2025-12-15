@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>ENSO — Dashboard Climático</title>
-
 <style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+/* ================= ENSO CONTENIDO ================= */
+
+.enso-container {
+    position: relative;
+    width: 100%;
+    min-height: 80vh;
     background: linear-gradient(180deg, #f9f9f9, #e5e5e5);
 }
 
+/* Panel lateral */
 #panel {
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 120px;              /* 👈 respeta barra institucional */
+    left: 30px;
     width: 260px;
     background: #ffffffd9;
     padding: 18px;
@@ -22,7 +20,7 @@ body {
     border: 1px solid #d9d9d9;
     backdrop-filter: blur(4px);
     box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
+    z-index: 50;
 }
 
 #panelTitle {
@@ -33,7 +31,8 @@ body {
     text-align: center;
 }
 
-button {
+/* Botones */
+.enso-btn {
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
@@ -48,15 +47,15 @@ button {
     transition: 0.2s;
 }
 
-button:hover {
+.enso-btn:hover {
     background: #005fa3;
 }
 
-button.secondary {
+.enso-btn.secondary {
     background: #444;
 }
 
-button.secondary:hover {
+.enso-btn.secondary:hover {
     background: #222;
 }
 
@@ -67,34 +66,34 @@ button.secondary:hover {
     text-align: center;
 }
 
+/* IFRAME */
 #visorFrame {
-    position: absolute;
-    top: 0;
-    left: 310px;
+    margin-left: 310px;
     width: calc(100% - 310px);
-    height: 100vh;
+    height: 80vh;
     border: none;
     background: #ffffff;
     border-left: 1px solid #ccc;
 }
 </style>
-</head>
 
-<body>
+<div class="enso-container">
 
-<div id="panel">
-    <div id="panelTitle">ENSO — Visualización</div>
+    <div id="panel">
+        <div id="panelTitle">ENSO — Visualización</div>
 
-    <button onclick="cargarBoxplot()">📦 BOXPLOT</button>
-    <button class="secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
+        <button class="enso-btn" onclick="cargarBoxplot()">📦 BOXPLOT</button>
+        <button class="enso-btn secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
 
-    <div class="note">
-        Región Niño 1+2 y Niño 3.4<br>
-        Multimodelo ENSO
+        <div class="note">
+            Región Niño 1+2 y Niño 3.4<br>
+            Multimodelo ENSO
+        </div>
     </div>
-</div>
 
-<iframe id="visorFrame" src="BOXPLOT.html"></iframe>
+    <iframe id="visorFrame" src="BOXPLOT.html"></iframe>
+
+</div>
 
 <script>
 function cargarBoxplot() {
@@ -105,6 +104,3 @@ function cargarPercentiles() {
     document.getElementById("visorFrame").src = "PERCENTILES.html";
 }
 </script>
-
-</body>
-</html>
