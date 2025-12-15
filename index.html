@@ -146,7 +146,10 @@ function showSection(section) {
   /* 🔥 ENSO y ESTACIONAL usan ancho grande */
   if (section === "estacional" || section === "enso") {
     content.style.maxWidth = "95%";
-    content.style.padding  = "20px";
+    content.style.paddingBottom = "24px";  // ↓ más aire abajo
+   /*   content.style.padding  = "10px";*/
+     content.style.paddingLeft = "10px";
+     content.style.paddingRight = "10px";
   } else {
     content.style.maxWidth = "1000px";
     content.style.padding  = "40px";
