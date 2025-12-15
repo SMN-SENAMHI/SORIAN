@@ -1,11 +1,9 @@
-<style>
-/* ================== FORZAR ANCHO COMPLETO ================== */
-.enso-fullwidth {
-    width: 100vw;
-    max-width: 100vw;
-    margin-left: calc(-50vw + 50%);
-}
+<!-- =========================================================
+     ENSO – CONTENIDO INTERNO
+     Compatible con index.html
+     ========================================================= -->
 
+<style>
 /* ================= CONTENEDOR GENERAL ================= */
 .enso-wrapper {
     display: flex;
@@ -14,7 +12,7 @@
     min-height: 70vh;
 }
 
-/* ================= PANEL ================= */
+/* ================= PANEL LATERAL ================= */
 .enso-panel {
     width: 260px;
     flex-shrink: 0;
@@ -28,8 +26,9 @@
 .enso-title {
     font-size: 18px;
     font-weight: 700;
-    text-align: center;
+    color: #222;
     margin-bottom: 18px;
+    text-align: center;
 }
 
 /* ================= BOTONES ================= */
@@ -44,17 +43,36 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+.enso-btn:hover {
+    background: #005fa3;
 }
 
 .enso-btn.secondary {
     background: #444;
 }
 
+.enso-btn.secondary:hover {
+    background: #222;
+}
+
+/* ================= NOTA ================= */
+.enso-note {
+    font-size: 12px;
+    color: #444;
+    margin-top: 12px;
+    text-align: center;
+}
+
 /* ================= VISOR EXPANDIDO ================= */
 #visor-container {
     position: relative;
     width: 100%;
-    height: calc(100vh - 260px);
+    height: calc(100vh - 260px); /* visor grande dinámico */
+    margin: 0;
+    padding: 0;
     border-radius: 12px;
     overflow: hidden;
     background: #fff;
@@ -69,13 +87,12 @@
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
-    .enso-fullwidth {
-        margin-left: 0;
-        width: 100%;
-    }
-
     .enso-wrapper {
         flex-direction: column;
+    }
+
+    .enso-panel {
+        width: 100%;
     }
 
     #visor-container {
@@ -84,38 +101,39 @@
 }
 </style>
 
-<div class="enso-fullwidth">
+<div class="enso-wrapper">
 
-    <div class="enso-wrapper">
+    <!-- PANEL -->
+    <div class="enso-panel">
+        <div class="enso-title">ENSO — Visualización</div>
 
-        <!-- PANEL -->
-        <div class="enso-panel">
-            <div class="enso-title">ENSO — Visualización</div>
+        <button class="enso-btn" onclick="cargarBoxplot()">📦 BOXPLOT</button>
+        <button class="enso-btn secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
 
-            <button class="enso-btn" onclick="cargarBoxplot()">📦 BOXPLOT</button>
-            <button class="enso-btn secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
-
-            <div class="enso-note">
-                Región Niño 1+2 y Niño 3.4<br>
-                Multimodelo ENSO
-            </div>
+        <div class="enso-note">
+            Región Niño 1+2 y Niño 3.4<br>
+            Multimodelo ENSO
         </div>
+    </div>
 
-        <!-- VISOR -->
-        <div id="visor-container">
-            <iframe id="ensoFrame" src="BOXPLOT.html"></iframe>
-        </div>
-
+    <!-- VISOR -->
+    <div id="visor-container">
+        <iframe id="ensoFrame" src="BOXPLOT.html"></iframe>
     </div>
 
 </div>
 
 <script>
+/* =========================================================
+   FORZAR RECARGA DEL IFRAME (cache-buster)
+   ========================================================= */
 function cargarBoxplot() {
-    document.getElementById("ensoFrame").src = "BOXPLOT.html";
+    const frame = document.getElementById("ensoFrame");
+    frame.src = "BOXPLOT.html?ts=" + new Date().getTime();
 }
 
 function cargarPercentiles() {
-    document.getElementById("ensoFrame").src = "PERCENTILES.html";
+    const frame = document.getElementById("ensoFrame");
+    frame.src = "PERCENTILES.html?ts=" + new Date().getTime();
 }
 </script>
