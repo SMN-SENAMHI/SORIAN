@@ -1,6 +1,6 @@
 <!-- =========================================================
      ENSO – CONTENIDO INTERNO
-     Compatible con index.html
+     (se carga dentro de index.html)
      ========================================================= -->
 
 <style>
@@ -79,6 +79,7 @@
     border: 1px solid #ccc;
 }
 
+/* iframe ocupa todo el visor */
 #visor-container iframe {
     width: 100%;
     height: 100%;
@@ -103,7 +104,7 @@
 
 <div class="enso-wrapper">
 
-    <!-- PANEL -->
+    <!-- ================= PANEL ================= -->
     <div class="enso-panel">
         <div class="enso-title">ENSO — Visualización</div>
 
@@ -116,24 +117,45 @@
         </div>
     </div>
 
-    <!-- VISOR -->
-    <div id="visor-container">
-        <iframe id="ensoFrame" src="BOXPLOT.html"></iframe>
-    </div>
+    <!-- ================= VISOR ================= -->
+    <div id="visor-container"></div>
 
 </div>
 
 <script>
 /* =========================================================
-   FORZAR RECARGA DEL IFRAME (cache-buster)
+   VISOR ROBUSTO
+   - destruye iframe anterior
+   - crea uno nuevo
+   - evita cache
+   - no depende del orden de carga
    ========================================================= */
+
+function cargarVisor(archivo) {
+    const container = document.getElementById("visor-container");
+
+    // Eliminar completamente el visor anterior
+    container.innerHTML = "";
+
+    // Crear iframe nuevo
+    const iframe = document.createElement("iframe");
+    iframe.src = archivo + "?ts=" + Date.now(); // cache-buster
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+
+    container.appendChild(iframe);
+}
+
+/* Botones */
 function cargarBoxplot() {
-    const frame = document.getElementById("ensoFrame");
-    frame.src = "BOXPLOT.html?ts=" + new Date().getTime();
+    cargarVisor("BOXPLOT.html");
 }
 
 function cargarPercentiles() {
-    const frame = document.getElementById("ensoFrame");
-    frame.src = "PERCENTILES.html?ts=" + new Date().getTime();
+    cargarVisor("PERCENTILES.html");
 }
+
+/* Carga inicial */
+cargarBoxplot();
 </script>
