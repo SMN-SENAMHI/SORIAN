@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SORIAN | Consultas y Sugerencias</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #e9eef3;
+  color: #222;
+}
+
+.top-bar {
+  background: white;
+  padding: 6px 18px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  border-bottom: 1px solid #cfcfcf;
+}
+.top-bar img { height: 45px; }
+
+nav { background: #003b6f; }
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 12px 0;
+}
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 600;
+}
+nav ul li a:hover,
+nav ul li a.active { text-decoration: underline; }
+
+.container {
+  max-width: 1150px;
+  margin: 40px auto 60px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 35px 40px;
+  margin-bottom: 35px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.card h2 {
+  font-size: 26px;
+  margin-bottom: 18px;
+  color: #003b6f;
+}
+.card p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.card a {
+  color: #003b6f;
+  font-weight: bold;
+  text-decoration: none;
+}
+.card a:hover { text-decoration: underline; }
+.note {
+  font-size: 15px;
+  color: #555;
+}
+
+.iframe-box iframe {
+  width: 100%;
+  height: 900px;
+  border: none;
+}
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  padding: 25px 10px 35px;
+}
+
+@media (max-width: 768px) {
+  nav ul { flex-wrap: wrap; gap: 18px; }
+  .card { padding: 25px 22px; }
+  .iframe-box iframe { height: 1000px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <img src="Lista/logo-minam.png" alt="MINAM">
+  <img src="Lista/logo-senamhi.png" alt="SENAMHI">
+</div>
+
+<nav>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="Descripcion.html">Descripción</a></li>
+    <li><a href="Subestacional.html">Subestacional</a></li>
+    <li><a href="Estacional.html">Estacional</a></li>
+    <li><a href="ENSO.html">ENSO</a></li>
+    <li><a href="Consultas.html" class="active">Consultas</a></li>
+  </ul>
+</nav>
+
+<section class="container">
+
+  <div class="card">
+    <h2>Contacto y sugerencias</h2>
+    <p><b>SORIAN – Sistema Operativo Regional Integrado de Análisis Numérico</b></p>
+    <p>Servicio Nacional de Meteorología e Hidrología del Perú (SENAMHI)</p>
+    <p>
+      📧 Correo de contacto:<br>
+      <a href="mailto:jllamocca@senamhi.gob.pe">jllamocca@senamhi.gob.pe</a>
+    </p>
+    <p class="note">
+      Este espacio está orientado a recibir sugerencias técnicas,
+      reportes de observaciones o solicitudes relacionadas al
+      funcionamiento del dashboard SORIAN.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Formulario de sugerencias y solicitudes</h2>
+    <div class="iframe-box">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScr-U11-kX_mHNbk2Oyq-ceEjRxfkmrBvU7YEiJ2BpRgHZQrg/viewform?embedded=true"
+              loading="lazy"></iframe>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  © SENAMHI – SORIAN | Uso institucional y referencial
+</footer>
+
+</body>
+</html>
