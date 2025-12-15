@@ -91,13 +91,13 @@ body {
 
 <body>
 
-<!-- BARRA SUPERIOR -->
+<!-- ================= BARRA SUPERIOR ================= -->
 <div class="top-bar">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
   <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
 </div>
 
-<!-- MENÚ -->
+<!-- ================= MENÚ ================= -->
 <div class="menu-bar">
   <div class="menu-links">
     <a onclick="showSection('home')" id="btn-home" class="active">Inicio</a>
@@ -109,18 +109,20 @@ body {
   </div>
 </div>
 
-<!-- PORTADA -->
+<!-- ================= PORTADA ================= -->
 <div id="hero"></div>
 
-<!-- CONTENIDO -->
+<!-- ================= CONTENIDO ================= -->
 <div id="content"></div>
 
 <script>
+/* ================= UTILIDADES ================= */
 function clearActive() {
   document.querySelectorAll('.menu-links a')
     .forEach(a => a.classList.remove('active'));
 }
 
+/* ================= NAVEGACIÓN ================= */
 function showSection(section) {
 
   clearActive();
@@ -141,7 +143,7 @@ function showSection(section) {
   hero.style.display    = "none";
   content.style.display = "block";
 
-  
+  /* 🔥 ENSO y ESTACIONAL usan ancho grande */
   if (section === "estacional" || section === "enso") {
     content.style.maxWidth = "95%";
     content.style.padding  = "10px";
@@ -150,22 +152,20 @@ function showSection(section) {
     content.style.padding  = "40px";
   }
 
-  /* =========================
-     CARGA CORRECTA DE HTML
-     ========================= */
   let archivo = section.charAt(0).toUpperCase() + section.slice(1) + ".html";
-
   if (section === "enso") archivo = "Enso.html";
 
   fetch(archivo)
     .then(r => r.text())
     .then(html => {
       content.innerHTML = html;
+
       if (section === "estacional") initEstacional();
+      if (section === "enso") initENSO();
     });
 }
 
-/* ------------------------ ESTACIONAL ------------------------ */
+/* ================= ESTACIONAL ================= */
 function initEstacional() {
   const modeloSelect   = document.getElementById("modelo");
   const variableSelect = document.getElementById("variable");
@@ -180,6 +180,28 @@ function initEstacional() {
 
   btnCargar.addEventListener("click", cargarVisor);
   cargarVisor();
+}
+
+/* ================= ENSO (MISMO PATRÓN) ================= */
+function initENSO() {
+  const visor  = document.getElementById("enso-visor");
+  const btnBox = document.getElementById("btn-enso-boxplot");
+  const btnPer = document.getElementById("btn-enso-percentiles");
+
+  if (!visor || !btnBox || !btnPer) {
+    console.warn("ENSO: elementos no encontrados");
+    return;
+  }
+
+  function cargar(html) {
+    visor.src = html + "?ts=" + Date.now(); // evita cache
+  }
+
+  btnBox.addEventListener("click", () => cargar("BOXPLOT.html"));
+  btnPer.addEventListener("click", () => cargar("PERCENTILES.html"));
+
+  // carga inicial
+  cargar("BOXPLOT.html");
 }
 </script>
 
