@@ -1,29 +1,30 @@
-<style>
-/* ================= ENSO CONTENIDO ================= */
+<!-- =========================
+     ENSO – CONTENIDO INTERNO
+     Compatible con index.html
+     ========================= -->
 
-.enso-container {
-    position: relative;
+<style>
+/* Contenedor general ENSO */
+.enso-wrapper {
+    display: flex;
+    gap: 20px;
     width: 100%;
-    min-height: 80vh;
-    background: linear-gradient(180deg, #f9f9f9, #e5e5e5);
+    min-height: 70vh;
 }
 
 /* Panel lateral */
-#panel {
-    position: fixed;
-    top: 120px;              /* 👈 respeta barra institucional */
-    left: 30px;
+.enso-panel {
     width: 260px;
-    background: #ffffffd9;
+    flex-shrink: 0;
+    background: #ffffff;
     padding: 18px;
     border-radius: 12px;
     border: 1px solid #d9d9d9;
-    backdrop-filter: blur(4px);
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-    z-index: 50;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-#panelTitle {
+/* Título panel */
+.enso-title {
     font-size: 18px;
     font-weight: 700;
     color: #222;
@@ -36,14 +37,13 @@
     width: 100%;
     padding: 12px;
     margin-bottom: 12px;
-    background: #0077CC;
-    color: white;
+    background: #0077cc;
+    color: #fff;
     border: none;
     border-radius: 8px;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
     transition: 0.2s;
 }
 
@@ -59,48 +59,74 @@
     background: #222;
 }
 
-.note {
+/* Nota inferior */
+.enso-note {
     font-size: 12px;
     color: #444;
-    margin-top: 10px;
+    margin-top: 12px;
     text-align: center;
 }
 
-/* IFRAME */
-#visorFrame {
-    margin-left: 310px;
-    width: calc(100% - 310px);
-    height: 80vh;
+/* Visor */
+.enso-visor {
+    flex: 1;
+    min-height: 70vh;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: #fff;
+    overflow: hidden;
+}
+
+.enso-visor iframe {
+    width: 100%;
+    height: 100%;
     border: none;
-    background: #ffffff;
-    border-left: 1px solid #ccc;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .enso-wrapper {
+        flex-direction: column;
+    }
+
+    .enso-panel {
+        width: 100%;
+    }
+
+    .enso-visor {
+        min-height: 60vh;
+    }
 }
 </style>
 
-<div class="enso-container">
+<div class="enso-wrapper">
 
-    <div id="panel">
-        <div id="panelTitle">ENSO — Visualización</div>
+    <!-- PANEL -->
+    <div class="enso-panel">
+        <div class="enso-title">ENSO — Visualización</div>
 
         <button class="enso-btn" onclick="cargarBoxplot()">📦 BOXPLOT</button>
         <button class="enso-btn secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
 
-        <div class="note">
+        <div class="enso-note">
             Región Niño 1+2 y Niño 3.4<br>
             Multimodelo ENSO
         </div>
     </div>
 
-    <iframe id="visorFrame" src="BOXPLOT.html"></iframe>
+    <!-- VISOR -->
+    <div class="enso-visor">
+        <iframe id="ensoFrame" src="BOXPLOT.html"></iframe>
+    </div>
 
 </div>
 
 <script>
 function cargarBoxplot() {
-    document.getElementById("visorFrame").src = "BOXPLOT.html";
+    document.getElementById("ensoFrame").src = "BOXPLOT.html";
 }
 
 function cargarPercentiles() {
-    document.getElementById("visorFrame").src = "PERCENTILES.html";
+    document.getElementById("ensoFrame").src = "PERCENTILES.html";
 }
 </script>
