@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ENSO — Dashboard Climático</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, #f9f9f9, #e5e5e5);
+}
+
+#panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 260px;
+    background: #ffffffd9;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #d9d9d9;
+    backdrop-filter: blur(4px);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+}
+
+#panelTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #0077CC;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #005fa3;
+}
+
+button.secondary {
+    background: #444;
+}
+
+button.secondary:hover {
+    background: #222;
+}
+
+.note {
+    font-size: 12px;
+    color: #444;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#visorFrame {
+    position: absolute;
+    top: 0;
+    left: 310px;
+    width: calc(100% - 310px);
+    height: 100vh;
+    border: none;
+    background: #ffffff;
+    border-left: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<div id="panel">
+    <div id="panelTitle">ENSO — Visualización</div>
+
+    <button onclick="cargarBoxplot()">📦 BOXPLOT</button>
+    <button class="secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
+
+    <div class="note">
+        Región Niño 1+2 y Niño 3.4<br>
+        Multimodelo ENSO
+    </div>
+</div>
+
+<iframe id="visorFrame" src="BOXPLOT.html"></iframe>
+
+<script>
+function cargarBoxplot() {
+    document.getElementById("visorFrame").src = "BOXPLOT.html";
+}
+
+function cargarPercentiles() {
+    document.getElementById("visorFrame").src = "PERCENTILES.html";
+}
+</script>
+
+</body>
+</html>
