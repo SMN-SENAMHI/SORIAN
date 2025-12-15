@@ -1,6 +1,6 @@
 <!-- =========================================================
      ENSO – CONTENIDO INTERNO
-     (inyectado por index.html)
+     Se carga vía fetch desde index.html
      ========================================================= -->
 
 <style>
@@ -12,7 +12,7 @@
     min-height: 70vh;
 }
 
-/* ================= PANEL ================= */
+/* ================= PANEL LATERAL ================= */
 .enso-panel {
     width: 260px;
     flex-shrink: 0;
@@ -26,6 +26,7 @@
 .enso-title {
     font-size: 18px;
     font-weight: 700;
+    color: #222;
     margin-bottom: 18px;
     text-align: center;
 }
@@ -93,21 +94,8 @@
     <div class="enso-panel">
         <div class="enso-title">ENSO — Visualización</div>
 
-        <button class="enso-btn"
-            onclick="
-              document.getElementById('visor-container').innerHTML =
-              '<iframe src=&quot;BOXPLOT.html?ts=' + Date.now() + '&quot;></iframe>';
-            ">
-            📦 BOXPLOT
-        </button>
-
-        <button class="enso-btn secondary"
-            onclick="
-              document.getElementById('visor-container').innerHTML =
-              '<iframe src=&quot;PERCENTILES.html?ts=' + Date.now() + '&quot;></iframe>';
-            ">
-            📊 PERCENTILES
-        </button>
+        <button class="enso-btn" onclick="cargarBoxplot()">📦 BOXPLOT</button>
+        <button class="enso-btn secondary" onclick="cargarPercentiles()">📊 PERCENTILES</button>
 
         <div class="enso-note">
             Región Niño 1+2 y Niño 3.4<br>
@@ -115,9 +103,45 @@
         </div>
     </div>
 
-    <!-- VISOR (carga inicial) -->
-    <div id="visor-container">
-        <iframe src="BOXPLOT.html"></iframe>
-    </div>
+    <!-- VISOR -->
+    <div id="visor-container"></div>
 
 </div>
+
+<script>
+/* =========================================================
+   VISOR ROBUSTO (SPA-safe)
+   ========================================================= */
+
+function cargarVisor(archivo) {
+    const container = document.getElementById("visor-container");
+    if (!container) {
+        console.warn("visor-container no encontrado aún");
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const iframe = document.createElement("iframe");
+    iframe.src = archivo + "?ts=" + Date.now();
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+
+    container.appendChild(iframe);
+}
+
+function cargarBoxplot() {
+    cargarVisor("BOXPLOT.html");
+}
+
+function cargarPercentiles() {
+    cargarVisor("PERCENTILES.html");
+}
+
+/* ================= CARGA INICIAL SEGURA ================= */
+/* Espera a que el DOM inyectado esté listo */
+setTimeout(() => {
+    cargarBoxplot();
+}, 50);
+</script>
