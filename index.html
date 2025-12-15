@@ -141,7 +141,8 @@ function showSection(section) {
   hero.style.display    = "none";
   content.style.display = "block";
 
-  if (section === "estacional") {
+  
+  if (section === "estacional" || section === "enso") {
     content.style.maxWidth = "95%";
     content.style.padding  = "10px";
   } else {
