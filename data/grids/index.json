@@ -1,0 +1,128 @@
+[
+ {
+  "model": "ecmwf",
+  "variable": "tpara",
+  "title": "Anomalía Precipitación (mm/mes)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ecmwf_tpara.json"
+ },
+ {
+  "model": "ecmwf",
+  "variable": "mx2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ecmwf_mx2t24a.json"
+ },
+ {
+  "model": "ecmwf",
+  "variable": "mn2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ecmwf_mn2t24a.json"
+ },
+ {
+  "model": "bom",
+  "variable": "tpara",
+  "title": "Anomalía Precipitación (mm/mes)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "bom_tpara.json"
+ },
+ {
+  "model": "bom",
+  "variable": "mx2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "bom_mx2t24a.json"
+ },
+ {
+  "model": "bom",
+  "variable": "mn2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "bom_mn2t24a.json"
+ },
+ {
+  "model": "ncep",
+  "variable": "tpara",
+  "title": "Anomalía Precipitación (mm/mes)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ncep_tpara.json"
+ },
+ {
+  "model": "ncep",
+  "variable": "mx2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ncep_mx2t24a.json"
+ },
+ {
+  "model": "ncep",
+  "variable": "mn2t24a",
+  "title": "Anomalía Temperatura (°C)",
+  "months": [
+   "Ago 2026",
+   "Set 2026",
+   "Oct 2026",
+   "Nov 2026",
+   "Dic 2026",
+   "Ene 2027"
+  ],
+  "file": "ncep_mn2t24a.json"
+ }
+]

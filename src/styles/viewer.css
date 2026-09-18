@@ -1,0 +1,969 @@
+/* ============ Visor a pantalla completa ============
+   El mapa ocupa todo el espacio disponible y los controles flotan
+   sobre el, de modo que no quede area vacia alrededor. */
+
+.viewer {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--accent);
+  box-shadow: var(--shadow);
+  isolation: isolate;
+}
+
+.viewer__stage { position: relative; grid-area: 1 / 1; min-width: 0; min-height: 0; overflow: hidden; }
+
+.viewer--summary { grid-template-columns: minmax(0, 1fr) 22rem; }
+.readout { grid-column: 1 / -1; }
+/* Fila fija para el reparto: con `auto` el contenido se comeria el mapa */
+@media (max-width: 899px) {
+  .viewer--summary {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) 46% auto;
+  }
+}
+.viewer__map { position: absolute; inset: 0; z-index: 0; }
+
+/* Con zoom fraccionario las teselas se escalan y dejan costuras de 1 px.
+   El fondo toma el tono de la base para que no se vean como rayas claras. */
+.viewer__map .leaflet-container { background: #f2f1ee; }
+
+/* ---------- Reparto del dominio ----------
+   Se abre a peticion y toma su propia columna: superpuesto taparia los
+   mandos justo cuando hay dos juegos de ellos. */
+.analysis {
+  grid-area: 1 / 2;
+  overflow-y: auto;
+  padding: 1rem 1.125rem;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  font-size: .8125rem;
+  animation: analysis-in .22s ease-out;
+}
+@keyframes analysis-in { from { opacity: 0; transform: translateX(14px); } }
+@keyframes analysis-up { from { opacity: 0; transform: translateY(16px); } }
+
+@media (max-width: 899px) {
+  .analysis {
+    grid-area: 2 / 1;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    animation-name: analysis-up;
+  }
+}
+
+.analysis__head { margin-bottom: .875rem; }
+.analysis__title { font-size: .9375rem; margin: 0 0 .125rem; }
+.analysis__sub { font-size: .75rem; color: var(--muted); margin: 0; }
+
+.analysis__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.analysis__half {
+  display: grid;
+  gap: .0625rem;
+  padding: .625rem .75rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  border-left: 3px solid var(--line);
+}
+.analysis__half--neg { border-left-color: #9d6115; }
+.analysis__half--pos { border-left-color: #12766e; }
+.analysis__pct { font-size: 1.375rem; font-weight: 700; color: var(--navy); line-height: 1.1; }
+.analysis__tag { font-size: .6875rem; color: var(--muted); }
+
+.analysis__bars { display: grid; gap: .1875rem; margin-bottom: .875rem; }
+.analysis__row {
+  display: grid;
+  grid-template-columns: 12px 5.5rem 1fr 2.75rem;
+  align-items: center;
+  gap: .4375rem;
+  padding: .125rem .25rem;
+  border-radius: 4px;
+}
+.analysis__row.is-peak { background: var(--accent); }
+.analysis__swatch { width: 12px; height: 12px; border-radius: 2px; }
+.analysis__range { font-size: .6875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.analysis__track { height: 7px; background: var(--accent); border-radius: 4px; overflow: hidden; }
+.analysis__row.is-peak .analysis__track { background: #dfe6ee; }
+.analysis__fill { display: block; height: 100%; background: var(--navy); border-radius: 4px; }
+.analysis__value {
+  font-size: .6875rem;
+  text-align: right;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.analysis__note { font-size: .6875rem; color: var(--muted); line-height: 1.5; margin: 0; }
+.grid-layer { position: absolute; top: 0; left: 0; pointer-events: none; }
+
+.viewer__overlay {
+  position: absolute;
+  z-index: 500;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: .5rem;
+  padding: .5rem;
+  pointer-events: none;
+}
+.viewer__overlay > * { pointer-events: auto; }
+/* deja libre la columna del zoom y la pantalla completa */
+.viewer__overlay--top { top: 0; padding-right: 3.5rem; }
+.viewer__overlay--bottom {
+  bottom: 0;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.viewer__panel {
+  background: rgb(255 255 255 / 90%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 10px rgb(10 28 72 / 12%);
+}
+
+/* Marca del punto consultado: solo senala donde, el valor se lee abajo */
+.probe-dot {
+  position: absolute;
+  z-index: 600;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--navy), 0 1px 6px rgb(10 28 72 / 45%);
+  pointer-events: none;
+}
+
+/* Franja de lectura, bajo el mapa y nunca encima de el */
+.readout {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem .75rem;
+  min-height: 30px;
+  margin: 0;
+  padding: .25rem .75rem;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  font-size: .75rem;
+  color: var(--muted);
+}
+.readout__head {
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+/* La frase es lo que se lee primero; el intervalo queda detras como respaldo */
+.readout__value {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.readout__kind {
+  font-size: .6875rem;
+  letter-spacing: .01em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  opacity: .85;
+}
+.readout__place { margin-left: auto; font-variant-numeric: tabular-nums; }
+.readout__hint { font-style: italic; opacity: .8; }
+
+/* En pantalla estrecha la lectura cabe en una linea: el rotulo cede
+   caracteres antes que partir el valor o las coordenadas. */
+@media (max-width: 480px) {
+  .readout { flex-wrap: wrap; gap: .125rem .5rem; padding: .3125rem .5rem; font-size: .6875rem; }
+  .readout__head {
+    order: 1;
+    min-width: 0;
+    flex: 0 1 auto;
+    font-size: .5625rem;
+    letter-spacing: .04em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .readout__place { order: 2; flex: 0 0 auto; margin-left: auto; }
+  /* la frase no cabe junto al rotulo: se le reserva ancho para que baje de
+     linea entera en vez de partirse a mitad de palabra */
+  .readout__value { order: 3; flex: 1 1 60%; font-size: .8125rem; line-height: 1.3; }
+  .readout__kind { order: 4; flex: 0 1 auto; font-size: .625rem; }
+  .readout__hint { order: 3; flex: 1 1 100%; }
+  .readout__head, .readout__place { white-space: nowrap; }
+}
+
+/* ---------- Controles ---------- */
+.controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .625rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Comparando, los dos lados forman una sola barra continua partida por el
+   centro, y no dos pastillas sueltas. Sueltas y ajustadas al contenido
+   quedaban de distinto ancho segun el modelo elegido; estiradas al 50% cada
+   una abria dentro de si misma un vacio blanco junto al corte -mas de 600 px
+   a 1440- que tapaba el mapa sin llevar nada.
+
+   La barra comparte fila con las acciones: sobre el mapa cada renglon de
+   alto cuesta datos tapados. Los dos lados van dentro de la misma caja, de
+   modo que cuando no cabe todo bajan juntos y la barra nunca se parte por
+   la mitad; sueltos, el flex-wrap dejaba un lado arriba y el otro debajo. */
+/* La barra no baja nunca de fila: se queda a la derecha de las acciones y,
+   si falta sitio, comprime su contenido en vez de irse debajo. */
+.controls--compare { flex-wrap: nowrap; }
+.controls--compare .controls__actions { flex: 0 0 auto; }
+
+/* Cada lado sobre la mitad del mapa que gobierna: el izquierdo a continuacion
+   de las acciones y el derecho pegado al borde derecho. Pegados uno al otro en
+   el centro formaban una pieza bonita pero muda: no se sabia cual mandaba
+   sobre cual. Siguen en la misma caja para que, si falta sitio, bajen juntos
+   en vez de partirse. */
+.controls__pair {
+  display: flex;
+  /* estirados, los dos miden lo mismo aunque uno parta en dos lineas */
+  align-items: stretch;
+  justify-content: space-between;
+  flex: 1 1 auto;
+  gap: .625rem;
+  min-width: 0;
+}
+.controls__pair .side-panel { flex: 0 1 auto; max-width: none; }
+
+/* separado del otro, el panel derecho recupera el borde que habia cedido a la
+   union cuando los dos formaban una sola pastilla */
+.controls__pair .side-panel--b { border-left: 1px solid rgb(255 255 255 / 70%); }
+
+/* Con un solo pronostico los mandos flotan sueltos: una barra continua
+   cruzaria el mapa de lado a lado y taparia datos sin necesidad. */
+.controls__single {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.controls__single::-webkit-scrollbar { display: none; }
+
+/* Cada grupo es una tarjeta: el rotulo manda sobre sus opciones en vez de
+   competir con ellas en la misma fila. Todo va apretado a proposito: los
+   mandos flotan sobre el mapa y cada pixel de alto tapa datos. */
+.controls__single .selector {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .25rem .5rem .25rem .625rem;
+  background: rgb(255 255 255 / 93%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 3px 14px rgb(10 28 72 / 16%);
+}
+.controls__single .selector__label { padding-left: .125rem; font-size: .5625rem; }
+.controls__single .chip { box-shadow: none; }
+
+/* Boton de comparacion */
+.compare {
+  display: flex;
+  align-items: center;
+  gap: .3125rem;
+  flex: 0 0 auto;
+  padding: .3125rem .5625rem;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 90%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgb(10 28 72 / 12%);
+  font: inherit;
+  font-weight: 600;
+  font-size: .6875rem;
+  color: var(--navy);
+  cursor: pointer;
+}
+.compare:hover { color: var(--blue-600); }
+.compare.is-active { background: var(--navy); border-color: var(--navy); color: #fff; }
+.compare--detail { position: relative; }
+.compare--detail.is-active { background: var(--blue); border-color: var(--blue); }
+.compare__warn {
+  position: absolute;
+  top: -4px; right: -4px;
+  display: grid; place-items: center;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #d98324;
+  color: #fff;
+  font-size: .5625rem;
+  font-weight: 800;
+}
+.compare__icon { width: 15px; height: 15px; flex: 0 0 auto; }
+.compare__icon svg { width: 100%; height: 100%; display: block; }
+
+/* Las tres acciones se agrupan en una sola pastilla de iconos. Sueltas y con
+   rotulo ocupaban 329 px de la fila, y el texto repetia lo que ya dice el
+   relleno de activo: "Comparando" es el boton en navy, "Continuo" el azul.
+   El nombre no se pierde -sigue en el tooltip, que ademas explica cada una,
+   y queda en el arbol para lector de pantalla-, solo deja de ocupar sitio
+   sobre el mapa. */
+.controls__actions {
+  display: flex;
+  gap: .125rem;
+  flex: 0 0 auto;
+  padding: .3125rem;
+  background: rgb(255 255 255 / 93%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 3px 14px rgb(10 28 72 / 16%);
+}
+/* dentro de la pastilla cada boton pierde su propio fondo: si no, se verian
+   tres pastillas dentro de una cuarta */
+.controls__actions .compare {
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: calc(var(--radius-sm) - 3px);
+}
+.controls__actions .compare:hover { background: var(--accent); }
+.controls__actions .compare.is-active { background: var(--navy); }
+.controls__actions .compare--detail.is-active { background: var(--blue); }
+.controls__actions .compare__icon { width: 17px; height: 17px; }
+.controls__actions .compare__warn { top: -1px; right: -1px; }
+
+/* el rotulo se retira de la vista, no del arbol */
+.controls__actions .compare__label {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Un panel por lado, sobre la mitad del mapa que gobierna */
+.side-panel {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: calc(50% - .25rem);
+  padding: .25rem .5rem .25rem .625rem;
+  background: rgb(255 255 255 / 93%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 3px 14px rgb(10 28 72 / 16%);
+  border-left: 3px solid var(--navy);
+}
+/* el panel derecho se refleja: su rotulo mira hacia su mitad */
+.side-panel--b {
+  flex-direction: row-reverse;
+  border-left: 0;
+  border-right: 3px solid var(--blue);
+  padding: .25rem .625rem .25rem .5rem;
+}
+
+.side-panel__head {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  flex: 0 0 auto;
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.side-panel--b .side-panel__head { color: var(--blue-600); }
+.side-panel__icon { width: 15px; height: 15px; }
+.side-panel__icon svg { width: 100%; height: 100%; display: block; }
+
+/* Una sola linea, siempre. Envolviendo, los modelos quedaban arriba, las
+   variables abajo y el rotulo del lado flotando en medio de las dos: tres
+   alturas distintas dentro de una barra que se lee de un vistazo. Si aun asi
+   no cabe, el cuerpo se desplaza a lo ancho, como los mandos del modo simple,
+   antes que romper la fila. */
+.side-panel__body {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: .625rem;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.side-panel__body::-webkit-scrollbar { display: none; }
+.side-panel__body .selector,
+.side-panel__body .selector__options { flex-wrap: nowrap; }
+
+.selector { display: flex; align-items: center; flex-wrap: wrap; gap: .375rem; flex: 0 1 auto; min-width: 0; }
+.selector__label {
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.selector__options { position: relative; display: flex; flex-wrap: wrap; gap: .25rem; }
+.selector__options .marker { background: var(--blue); }
+
+.chip {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: .3125rem;
+  min-height: 34px;
+  padding: .25rem .6875rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: .8125rem;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color .16s, color .2s;
+}
+.chip:hover { border-color: var(--blue); color: var(--blue-600); }
+/* el fondo lo pone la pastilla que se desliza por detras */
+.chip.is-active { background: transparent; border-color: transparent; color: #fff; }
+.chip__glyph { width: 17px; height: 17px; flex: 0 0 auto; }
+
+/* Sobre el mapa las capsulas se aprietan; en la hoja tactil no. */
+.viewer__overlay--top .chip { min-height: 30px; padding: .1875rem .5625rem; font-size: .75rem; gap: .25rem; }
+.viewer__overlay--top .chip__glyph { width: 15px; height: 15px; }
+.chip__glyph svg { width: 100%; height: 100%; display: block; }
+.chip__short { display: none; }
+
+/* Comparando hay dos juegos de controles. Las variables quedan en su
+   pictograma y los rotulos ceden su sitio a una linea divisoria: el panel
+   ya dice de que lado es y los modelos se reconocen por su nombre. */
+.side-panel .selector__label {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* Comparando con el reparto abierto, a la barra le queda poco mas de la mitad
+   del ancho. Por debajo de 1600 px eso ya no da para los dos rotulos, asi que
+   ceden su sitio -se retiran de la vista, no del arbol- y quedan el
+   pictograma y el filete de color, que ya dicen de que mitad se trata. */
+@media (max-width: 1600px) {
+  .controls--tight .side-panel__head > span:not(.side-panel__icon) {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.side-panel__body > .selector + .selector {
+  border-left: 1px solid var(--line);
+  padding-left: .625rem;
+}
+
+.side-panel .chip__glyph { width: 19px; height: 19px; }
+.side-panel .chip:has(.chip__glyph) .chip__label,
+.side-panel .chip:has(.chip__glyph) .chip__short { display: none; }
+.side-panel .chip:has(.chip__glyph) { padding: .25rem .5rem; }
+
+/* ---------- Leyenda ---------- */
+.viewer__panel--legend { padding: .4375rem .5625rem; max-width: 17rem; }
+.legend { margin: 0; }
+.legend__title {
+  font-size: .625rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: .3125rem;
+  line-height: 1.3;
+}
+.legend__bar { display: flex; height: 9px; border-radius: 3px; overflow: hidden; }
+.legend__swatch { flex: 1; }
+.legend__ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: .1875rem;
+  font-size: .625rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Linea de tiempo ---------- */
+.viewer__panel--time {
+  display: flex;
+  align-items: center;
+  gap: .1875rem;
+  padding: .25rem;
+  max-width: 100%;
+  min-width: 0;
+}
+.timeline__play {
+  flex: 0 0 auto;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: var(--navy);
+  color: #fff;
+  font-size: .75rem;
+  cursor: pointer;
+}
+.timeline__play:hover { background: var(--blue); }
+.timeline__steps {
+  display: flex;
+  gap: .1875rem;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.timeline__steps::-webkit-scrollbar { display: none; }
+.timeline__step {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: .25rem .5rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.timeline__step:hover { background: var(--accent); }
+.timeline__step.is-active { background: var(--navy); color: #fff; }
+
+/* Controles de mapa: un unico bloque con el mismo acabado que los paneles */
+/* Boton suelto del mapa, con el mismo acabado que el control de zoom */
+.map-btn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 93%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 3px 14px rgb(10 28 72 / 16%);
+  color: var(--navy);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.map-btn:hover { background: var(--accent); color: var(--blue-600); }
+.map-btn svg { width: 15px; height: 15px; display: block; }
+
+/* En pantalla completa el elemento es la aplicacion entera: la cabecera queda
+   arriba y el visor ocupa el resto. El fondo hay que declararlo, que el que
+   pone el navegador por omision es negro. */
+#app:fullscreen { height: 100%; background: var(--canvas); }
+#app:fullscreen .outlet--app { padding: .5rem; }
+
+/* Desde el visor se puede saltar a ENSO sin salir de pantalla completa, y ahi
+   el contenido es texto y graficos, mas altos que la pantalla: sin esto se
+   quedaban cortados y no habia forma de bajar. El visor no lo necesita -llena
+   la ventana por diseno- y desplazarlo solo despegaria el mapa de su marco. */
+#app:fullscreen .outlet:not(.outlet--app) { overflow-y: auto; }
+
+/* A pantalla completa la cabecera deja de ser una barra de navegacion y pasa a
+   ser la firma de lo que se esta proyectando, que suele mirarse de lejos: la
+   marca crece y de las cinco secciones quedan las dos que tienen visor. Las
+   otras tres son texto corrido, que a esa distancia no se lee. */
+#app:fullscreen { --header-h: 96px; }
+
+#app:fullscreen .nav__link:not([data-route="estacional"]):not([data-route="enso"]) {
+  display: none;
+}
+#app:fullscreen .nav { gap: .5rem; }
+#app:fullscreen .nav__link { padding: .625rem 1.5rem; font-size: 1.125rem; }
+
+/* En pantalla completa la marca es rotulo, no enlace: solo navegan Estacional
+   y ENSO. El clic lo detiene el manejador; esto quita la mano del cursor. */
+#app:fullscreen .brand { gap: 1rem; cursor: default; }
+#app:fullscreen .brand__mark { width: 52px; height: 52px; }
+#app:fullscreen .brand__logo { height: 46px; }
+#app:fullscreen .brand__logo--senamhi { height: 52px; }
+#app:fullscreen .brand__divider { height: 54px; }
+#app:fullscreen .brand__name strong {
+  font-size: 2.5rem;
+  letter-spacing: .3em;
+  margin-right: -.3em;
+}
+#app:fullscreen .brand__name small { font-size: .9375rem; }
+#app:fullscreen .brand__full-long { display: inline; }
+#app:fullscreen .brand__full-short { display: none; }
+
+/* la firma de la escala se engrosa y toma algo de luz, que es lo unico de la
+   cabecera que no es ni texto ni logotipo */
+#app:fullscreen .masthead__scale {
+  height: 5px;
+  box-shadow: 0 0 18px rgb(53 151 143 / 45%);
+}
+
+/* El cambio se hace ver: al entrar y al salir, la marca crece y se recoge en
+   vez de aparecer ya hecha. Sin esto el salto de tamano parece un fallo. */
+.masthead__bar,
+.brand, .brand__mark, .brand__logo, .brand__divider,
+.brand__name strong, .brand__name small,
+.masthead__scale {
+  transition:
+    height .34s cubic-bezier(.2, .75, .3, 1),
+    width .34s cubic-bezier(.2, .75, .3, 1),
+    gap .34s cubic-bezier(.2, .75, .3, 1),
+    font-size .34s cubic-bezier(.2, .75, .3, 1),
+    letter-spacing .34s cubic-bezier(.2, .75, .3, 1),
+    margin .34s cubic-bezier(.2, .75, .3, 1),
+    box-shadow .34s ease;
+}
+@media (min-width: 900px) {
+  #app:fullscreen .nav__link {
+    transition:
+      color .2s ease,
+      padding .34s cubic-bezier(.2, .75, .3, 1),
+      font-size .34s cubic-bezier(.2, .75, .3, 1);
+  }
+}
+
+.leaflet-touch .leaflet-bar,
+.leaflet-bar {
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 3px 14px rgb(10 28 72 / 16%);
+  overflow: hidden;
+  background: rgb(255 255 255 / 93%);
+  backdrop-filter: blur(10px);
+}
+
+.leaflet-touch .leaflet-bar a,
+.leaflet-bar a.leaflet-control-zoom-in,
+.leaflet-bar a.leaflet-control-zoom-out {
+  width: 28px;
+  height: 28px;
+  line-height: 27px;
+  font-size: .9375rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: transparent;
+  border: 0;
+  transition: background .12s, color .12s;
+}
+.leaflet-touch .leaflet-bar a:first-child,
+.leaflet-touch .leaflet-bar a:last-child { border-radius: 0; }
+.leaflet-bar a + a { border-top: 1px solid var(--line); }
+
+.leaflet-bar a:hover { background: var(--accent); color: var(--blue-600); }
+.leaflet-bar a:active { background: var(--blue); color: #fff; }
+.leaflet-bar a.leaflet-disabled { color: #b6c0cc; background: transparent; }
+
+.leaflet-control-attribution {
+  font-size: .5625rem;
+  padding: 0 .3125rem;
+  background: rgb(255 255 255 / 62%);
+  color: var(--muted);
+}
+.leaflet-control-attribution a { color: var(--muted); }
+
+.leaflet-top.leaflet-right { margin-top: 3.25rem; }
+
+/* ============ Disposicion compacta ============
+   El mapa queda despejado; los mandos bajan a una barra al alcance del
+   pulgar y las opciones se eligen en una hoja inferior. */
+@media (max-width: 860px) {
+  .viewer__overlay--top { display: none; }
+  .viewer__overlay { padding: .4375rem; gap: .4375rem; }
+  .viewer__overlay--bottom { flex-direction: column; align-items: stretch; }
+
+  .viewer__panel--legend { max-width: none; padding: .4375rem .5rem; }
+  .legend__title { font-size: .625rem; }
+
+  .viewer__panel--time { padding: .25rem; }
+  .timeline__step { font-size: .75rem; padding: .3125rem .5625rem; min-height: 34px; }
+  .timeline__play { width: 34px; height: 34px; }
+
+  .leaflet-top.leaflet-right { margin-top: .5rem; }
+}
+
+
+/* ---------- Graficos ENSO ---------- */
+.chart {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1.125rem;
+  padding: 1.25rem 1rem 1rem;
+}
+@media (min-width: 900px) { .chart { padding: 1.75rem 1.75rem 1.25rem; gap: 1.5rem; } }
+.chart__caption { padding: 0 .25rem; }
+.chart__title { font-size: clamp(.9375rem, 2.2vw, 1.125rem); margin: 0 0 .25rem; text-wrap: balance; }
+.chart__subtitle { font-size: .8125rem; color: var(--muted); margin: 0; }
+@media (max-width: 640px) {
+  .chart { padding: 1rem .875rem .875rem; gap: .875rem; }
+  .chart__title { font-size: .8125rem; line-height: 1.35; }
+  .chart__panels { gap: 1.5rem; }
+}
+
+.chart__panels {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.panel { margin: 0; min-width: 0; }
+.panel__name {
+  display: block;
+  margin-bottom: .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--line);
+  font-size: .9375rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--navy);
+}
+.panel__plot { min-height: 340px; }
+
+/* ---------- Cortina de comparacion ---------- */
+.swipe { position: absolute; inset: 0; z-index: 450; pointer-events: none; }
+
+/* La guia visible mide 3 px, pero el area que responde al dedo mide 44:
+   con el ancho de la linea seria imposible agarrarla en un movil. */
+.swipe__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 44px;
+  margin-left: -22px;
+  display: grid;
+  place-items: center;
+  cursor: ew-resize;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.swipe__handle:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; border-radius: 22px; }
+
+.swipe__line {
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(10 28 72 / 30%), 0 0 12px rgb(10 28 72 / 30%);
+}
+
+.swipe__grip {
+  position: relative;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 10px rgb(10 28 72 / 32%), 0 0 0 1px rgb(10 28 72 / 12%);
+  transition: transform .12s ease-out;
+}
+.swipe__grip::before,
+.swipe__grip::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0; height: 0;
+  border-block: 5px solid transparent;
+  transform: translateY(-50%);
+}
+.swipe__grip::before { left: 11px; border-right: 7px solid var(--navy); }
+.swipe__grip::after { right: 11px; border-left: 7px solid var(--navy); }
+.swipe__handle.is-dragging .swipe__grip { transform: scale(1.12); }
+.swipe__handle.is-dragging .swipe__line { box-shadow: 0 0 0 1px var(--blue), 0 0 16px rgb(11 107 184 / 45%); }
+
+@media (pointer: coarse) {
+  .swipe__handle { width: 56px; margin-left: -28px; }
+  .swipe__grip { width: 52px; height: 52px; }
+}
+
+
+/* Con dos escalas visibles, la leyenda se apila */
+.viewer__panel--legend { display: grid; gap: .5rem; }
+
+/* Las etiquetas del mapa base van sobre la grilla, sin capturar el puntero */
+.leaflet-shadow-pane { z-index: 500; pointer-events: none; }
+
+/* ---------- Barra de mandos (compacta) ---------- */
+.dock { display: none; }
+
+@media (max-width: 860px) {
+  .dock {
+    display: grid;
+    gap: .375rem;
+    flex: 0 0 auto;
+    padding-top: .4375rem;
+  }
+  .dock__row { display: flex; gap: .375rem; }
+  .dock__row--actions .compare { flex: 1 1 0; justify-content: center; }
+
+  .dock__pick {
+    flex: 1 1 0;
+    min-width: 0;
+    display: grid;
+    gap: .0625rem;
+    padding: .5rem .75rem;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--navy);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    font: inherit;
+    cursor: pointer;
+  }
+  .dock__pick--b { border-top-color: var(--blue); }
+  .dock__pick:active { background: var(--accent); }
+
+  .dock__label,
+  .dock__side {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    font-size: .5625rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .dock__pick--b .dock__side { color: var(--blue-600); }
+  .dock__side-icon { width: 13px; height: 13px; }
+  .dock__side-icon svg { width: 100%; height: 100%; display: block; }
+
+  .dock__value {
+    font-size: .875rem;
+    font-weight: 700;
+    color: var(--navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Hoja de opciones ---------- */
+.sheet { position: fixed; inset: 0; z-index: 1000; }
+.sheet[hidden] { display: none; }
+
+.sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(10 28 72 / 45%);
+  opacity: 0;
+  transition: opacity .18s;
+}
+.sheet.is-open .sheet__scrim { opacity: 1; }
+
+.sheet__panel {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  gap: 1rem;
+  padding: .5rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-radius: 1rem 1rem 0 0;
+  box-shadow: 0 -8px 32px rgb(10 28 72 / 24%);
+  translate: 0 100%;
+  transition: translate .18s ease-out;
+  max-height: 80dvh;
+  overflow-y: auto;
+}
+.sheet.is-open .sheet__panel { translate: 0 0; }
+
+.sheet__grip {
+  justify-self: center;
+  width: 42px; height: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: var(--line);
+  cursor: pointer;
+}
+.sheet__title { font-size: 1rem; margin: 0; }
+
+.sheet__body { display: grid; gap: 1.25rem; }
+.sheet__body .selector { display: grid; gap: .5rem; align-items: stretch; }
+.sheet__body .selector__label { display: block; font-size: .6875rem; }
+.sheet__body .selector__options { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: .5rem; }
+.sheet__body .chip {
+  justify-content: center;
+  min-height: 48px;
+  border-radius: var(--radius-sm);
+  font-size: .9375rem;
+}
+.sheet__body .chip__glyph { width: 20px; height: 20px; }
+.sheet__done { width: 100%; }
+
+/* ============ Disposicion amplia ============
+   Con pantalla grande los mandos ganan algo de aire, pero siguen flotando
+   sobre los datos: crecer de mas seria tapar mas mapa. */
+@media (min-width: 1200px) {
+  .viewer__overlay { padding: .625rem; gap: .625rem; }
+  /* la columna del zoom se mantiene libre pese al relleno de arriba */
+  .viewer__overlay--top { padding-right: 3.25rem; }
+
+  .compare { padding: .375rem .625rem; font-size: .75rem; }
+  .compare__icon { width: 16px; height: 16px; }
+
+  .controls__single { gap: .625rem; }
+  .selector__label { font-size: .625rem; }
+  .selector__options { gap: .3125rem; }
+
+  .viewer__overlay--top .chip { min-height: 32px; padding: .25rem .6875rem; font-size: .8125rem; }
+  .viewer__overlay--top .chip__glyph { width: 17px; height: 17px; }
+  .side-panel .chip__glyph { width: 19px; height: 19px; }
+
+  .side-panel { padding: .3125rem .5rem .3125rem .625rem; }
+  .side-panel__head { font-size: .625rem; }
+  .side-panel__icon { width: 16px; height: 16px; }
+
+  .viewer__panel--legend { padding: .5rem .625rem; max-width: 20rem; }
+  .legend__title { font-size: .6875rem; margin-bottom: .375rem; }
+  .legend__bar { height: 10px; }
+  .legend__ticks { font-size: .625rem; }
+
+  .viewer__panel--time { padding: .25rem; gap: .1875rem; }
+  .timeline__play { width: 32px; height: 32px; font-size: .8125rem; }
+  .timeline__step { min-height: 32px; padding: .25rem .625rem; font-size: .8125rem; }
+
+  .leaflet-touch .leaflet-bar a,
+  .leaflet-bar a.leaflet-control-zoom-in,
+  .leaflet-bar a.leaflet-control-zoom-out {
+    width: 30px; height: 30px; line-height: 29px; font-size: 1rem;
+  }
+  .map-btn { width: 30px; height: 30px; }
+}
+

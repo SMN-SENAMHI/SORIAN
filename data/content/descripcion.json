@@ -1,0 +1,163 @@
+{
+ "intro": [
+  "SORIAN es una plataforma operativa desarrollada por la Subdirección de Cambio Climático y Modelamiento Atmosférico del Servicio Nacional de Meteorología e Hidrología del Perú (SENAMHI), orientada a integrar, analizar y visualizar información climática proveniente de modelos globales y regionales de predicción mensual y estacional.",
+  "Su objetivo principal es brindar información climática clara, actualizada y de fácil interpretación, que apoye las actividades de vigilancia, monitoreo climático y la toma de decisiones en el Perú y Sudamérica.",
+  "Ante la creciente disponibilidad de modelos y productos de predicción, frecuentemente dispersos y de alta complejidad técnica, SORIAN organiza, estandariza y presenta esta información de manera integrada y accesible para distintos tipos de usuarios."
+ ],
+ "models": {
+  "title": "Modelos globales integrados",
+  "lead": "SORIAN integra de forma operativa los principales modelos globales de predicción climática utilizados a nivel internacional.",
+  "columns": [
+   "Modelo",
+   "Institución",
+   "País / Región"
+  ],
+  "rows": [
+   [
+    "BOM",
+    "Bureau of Meteorology",
+    "Australia"
+   ],
+   [
+    "ECMWF (SEAS5 / S2S)",
+    "European Centre for Medium-Range Weather Forecasts",
+    "Europa"
+   ],
+   [
+    "UKMO",
+    "UK Met Office",
+    "Reino Unido"
+   ],
+   [
+    "DWD",
+    "Deutscher Wetterdienst",
+    "Alemania"
+   ],
+   [
+    "Météo-France",
+    "Météo-France",
+    "Francia"
+   ],
+   [
+    "JMA",
+    "Japan Meteorological Agency",
+    "Japón"
+   ],
+   [
+    "CMCC",
+    "Centro Euro-Mediterraneo per i Cambiamenti Climatici",
+    "Italia"
+   ],
+   [
+    "NCEP – CFSv2",
+    "NOAA / NCEP",
+    "Estados Unidos"
+   ],
+   [
+    "NCEP – GEFS",
+    "NOAA / NCEP",
+    "Estados Unidos"
+   ],
+   [
+    "ECCC – GEM5",
+    "Environment and Climate Change Canada",
+    "Canadá"
+   ],
+   [
+    "CanESM5",
+    "Canadian Centre for Climate Modelling and Analysis",
+    "Canadá"
+   ],
+   [
+    "NCAR – CESM1",
+    "NCAR",
+    "Estados Unidos"
+   ],
+   [
+    "NCAR – CCSM4",
+    "NCAR",
+    "Estados Unidos"
+   ],
+   [
+    "GFDL – SPEAR",
+    "NOAA GFDL",
+    "Estados Unidos"
+   ],
+   [
+    "NASA – GEOS5",
+    "NASA",
+    "Estados Unidos"
+   ],
+   [
+    "APCC – SCOPS",
+    "APEC Climate Center",
+    "Corea del Sur"
+   ],
+   [
+    "CWA – CWACFSv2",
+    "Central Weather Administration",
+    "Taiwán"
+   ],
+   [
+    "KMA – GLOSEA6-GC3",
+    "Korea Meteorological Administration",
+    "Corea del Sur"
+   ],
+   [
+    "MGO – MGOAM2",
+    "Main Geophysical Observatory",
+    "Rusia"
+   ],
+   [
+    "PNU-RDA – CGCMv2",
+    "Pusan National University",
+    "Corea del Sur"
+   ]
+  ]
+ },
+ "regional": {
+  "title": "Modelos regionales de alta resolución (WRF)",
+  "lead": "SORIAN incorpora predicciones regionales de alta resolución espacial (8–10 km), generadas mediante reducción de escala dinámica con el modelo WRF, forzado por modelos globales como ECMWF, CFSv2 y GEFS.",
+  "items": [
+   "WRF – Weather Research and Forecasting Model.",
+   "Configuraciones físicas optimizadas para regiones de topografía compleja.",
+   "Ensambles regionales para evaluación de incertidumbre."
+  ],
+  "note": "La configuración del modelo WRF utilizada en SORIAN se sustenta en literatura científica especializada, permitiendo una mejor representación de la precipitación, temperatura, viento y procesos atmosféricos en zonas altoandinas y costeras del Perú."
+ },
+ "references": [
+  {
+   "authors": "Llacza, A., Paredes, J., Llamocca, J., Saavedra, M., Fita, L., Ruiz, C., & Junquas, C. (2025).",
+   "title": "Improved spatial representation of precipitation and air surface temperature over highlands of the southern tropical Andes (Lake Titicaca region) during an austral summer using the WRF model.",
+   "doi": "https://doi.org/10.1016/j.atmosres.2025.108262"
+  },
+  {
+   "authors": "Dominguez, F., Rasmussen, R., Liu, C., Ikeda, K., Prein, A., Varble, A., Arias, P. A., Llamocca, J., et al. (2024).",
+   "title": "Advancing South American water and climate science through multidecadal convection-permitting modeling.",
+   "doi": "https://doi.org/10.1175/BAMS-D-22-0226.1"
+  }
+ ],
+ "viewers": {
+  "title": "Visores disponibles",
+  "groups": [
+   {
+    "name": "Visor estacional",
+    "items": [
+     "Predicciones mensuales multimodelo.",
+     "Anomalías de precipitación.",
+     "Anomalías de temperatura máxima y mínima.",
+     "Consenso y dispersión del ensamble.",
+     "Mapas para Perú y Sudamérica."
+    ]
+   },
+   {
+    "name": "Visor ENSO",
+    "items": [
+     "Evolución observada y predicción de la anomalía de TSM.",
+     "Indicadores para las regiones Niño 1+2 y Niño 3.4.",
+     "Percentiles, boxplots y análisis multimodelo."
+    ]
+   }
+  ]
+ }
+}

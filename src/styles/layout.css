@@ -1,0 +1,353 @@
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.outlet {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding: 1rem 1rem var(--outlet-end);
+}
+.outlet--wide { max-width: 1600px; }
+@media (min-width: 1100px) { .outlet--wide { padding-inline: 2rem; } }
+
+/* Vistas de tipo aplicacion: el contenido ocupa la ventana y no desplaza */
+body.is-app #app { height: 100dvh; overflow: hidden; }
+body.is-app .footer { display: none; }
+
+.outlet--app {
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+  min-height: 0;
+  padding: .5rem;
+}
+
+.app-note {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: .25rem .25rem 0;
+  font-size: .625rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.app-note b { color: var(--ink); }
+
+.view__header { margin-bottom: 1.25rem; }
+.view__lead { color: var(--muted); max-width: 65ch; margin: 0; }
+
+/* ---------- Masthead ---------- */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+/* La escala de anomalias de SORIAN, reducida a una firma de 3 px */
+.masthead__scale { height: 3px; background: var(--scale-line); }
+@media (max-width: 899px) { .masthead { position: sticky; } .masthead__bar { position: relative; } }
+
+.masthead__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: var(--header-h);
+  padding-inline: var(--rail);
+}
+@media (min-width: 900px) { .masthead { display: block; } }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+  min-height: 44px;
+}
+.brand__mark { width: 30px; height: 30px; flex: 0 0 auto; }
+.brand__logos { display: flex; align-items: center; gap: .5rem; flex: 0 0 auto; }
+.brand__logo { height: 22px; width: auto; }
+.brand__logo--senamhi { height: 26px; }
+.brand__divider { width: 1px; height: 26px; background: var(--line); }
+.brand__name { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+/* el interletraje abre la palabra; el margen negativo recoge el hueco que
+   deja detras de la ultima letra, para que la linea de abajo alinee */
+.brand__name strong {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: .24em;
+  margin-right: -.24em;
+  line-height: 1.1;
+  color: var(--navy);
+  /* seis letras muy abiertas: en cuanto la barra se aprieta -telefono estrecho
+     o ventana a medio ancho- se partia en "SORIA / N" */
+  white-space: nowrap;
+}
+.brand__name small { font-size: .625rem; color: var(--muted); white-space: nowrap; }
+.brand__full-long { display: none; }
+@media (min-width: 1100px) {
+  .brand__full-long { display: inline; }
+  .brand__full-short { display: none; }
+}
+
+@media (max-width: 420px) {
+  .brand__divider, .brand__name small, .brand__mark { display: none; }
+  .brand__logo { height: 20px; }
+  .brand__logo--senamhi { height: 24px; }
+}
+
+.nav__burger {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+.nav__burger-bars,
+.nav__burger-bars::before,
+.nav__burger-bars::after {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--navy);
+  border-radius: 2px;
+  transition: transform .3s cubic-bezier(.3, .9, .3, 1.05), background-color .2s;
+}
+.nav__burger[aria-expanded="true"] .nav__burger-bars { background: transparent; }
+.nav__burger[aria-expanded="true"] .nav__burger-bars::before { transform: translateY(6px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] .nav__burger-bars::after { transform: translateY(-6px) rotate(-45deg); }
+.nav__burger-bars { position: relative; }
+.nav__burger-bars::before, .nav__burger-bars::after {
+  content: ""; position: absolute; left: 0;
+}
+.nav__burger-bars::before { top: -6px; }
+.nav__burger-bars::after { top: 6px; }
+
+.nav {
+  position: absolute;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  gap: .1875rem;
+  padding: .5rem .75rem 1rem;
+
+  /* se mantiene en el arbol para poder animar la apertura */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-10px) scaleY(.97);
+  transform-origin: top center;
+  transition:
+    opacity .2s ease,
+    transform .3s cubic-bezier(.2, .9, .3, 1.06),
+    visibility 0s linear .3s;
+}
+.nav.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.nav .marker { display: none; }
+
+/* Sin filete bajo cada entrada: con cinco opciones las lineas pesaban mas
+   que los nombres. La activa se marca con la misma pastilla que en escritorio. */
+.nav__link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: .5rem .875rem;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity .2s ease,
+    transform .26s cubic-bezier(.2, .9, .3, 1.06),
+    background .15s ease,
+    color .15s ease;
+}
+.nav.is-open .nav__link { opacity: 1; transform: none; }
+.nav.is-open .nav__link:nth-of-type(1) { transition-delay: .05s; }
+.nav.is-open .nav__link:nth-of-type(2) { transition-delay: .09s; }
+.nav.is-open .nav__link:nth-of-type(3) { transition-delay: .13s; }
+.nav.is-open .nav__link:nth-of-type(4) { transition-delay: .17s; }
+.nav.is-open .nav__link:nth-of-type(5) { transition-delay: .21s; }
+.nav__link.is-active { background: var(--navy); color: #fff; font-weight: 600; }
+
+/* En pantallas amplias la cabecera cabe en una sola franja: la marca a la
+   izquierda y la navegacion a la derecha, para no gastar alto en el visor. */
+@media (min-width: 900px) {
+  :root { --header-h: 66px; }
+
+  .masthead__bar { gap: 2.5rem; }
+  .nav__burger { display: none; }
+
+  .nav {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 1.5rem;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    margin-left: auto;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition: none;
+  }
+  .nav .marker { display: block; background: var(--navy); }
+  .nav { gap: .25rem; align-items: center; }
+  .nav__link {
+    display: flex;
+    align-items: center;
+    padding: .4375rem .875rem;
+    border: 0;
+    border-radius: 999px;
+    font-size: .9375rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background .12s, color .12s;
+  }
+  /* relative para anclar la pastilla; sin anular top/left el desplegable
+     movil arrastraria sus desplazamientos hasta aqui */
+  .nav { position: relative; top: auto; left: auto; right: auto; }
+  .nav__link { position: relative; z-index: 1; }
+  .nav__link {
+    opacity: 1;
+    transform: none;
+    transition: color .2s ease;
+  }
+  .nav__link:hover { color: var(--navy); }
+  .nav__link.is-active { background: none; color: #fff; font-weight: 600; }
+
+
+  .brand__mark { width: 36px; height: 36px; }
+  .brand__logo { height: 32px; }
+  .brand__logo--senamhi { height: 36px; }
+  .brand__divider { height: 34px; }
+  .brand__name strong { font-size: 1.5rem; font-weight: 700; letter-spacing: .22em; margin-right: -.22em; }
+  .brand__name small { font-size: .6875rem; }
+}
+
+/* ---------- Pie ---------- */
+/* Dos franjas sobre el navy de la pagina: arriba la marca con PEGASO, abajo
+   el aviso legal. La escala cromatica corona la franja como arriba. */
+.footer { background: var(--navy); color: #a9c0da; font-size: .8125rem; }
+
+/* La misma firma de 3 px que abre la pagina, ahora cerrandola */
+.footer__scale { height: 3px; background: var(--scale-line); }
+
+/* Un solo renglon: marca, aviso, PEGASO y copyright. */
+.footer__inner {
+  display: flex;
+  align-items: center;
+  gap: .75rem 1.25rem;
+  padding: .375rem var(--rail);
+  line-height: 1.3;
+}
+
+.footer__wordmark {
+  flex: 0 0 auto;
+  font-size: .9375rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  margin-right: -.2em;
+  color: #fff;
+  line-height: 1;
+  /* la firma respira: se enciende y se apaga muy despacio, lo justo para que
+     se note que la pagina esta viva sin llamar la atencion */
+  animation: firma-luz 9s ease-in-out infinite;
+}
+
+@keyframes firma-luz {
+  0%, 100% { text-shadow: 0 0 12px rgb(122 178 236 / 0%); }
+  50% { text-shadow: 0 0 2px rgb(226 240 255 / 35%), 0 0 20px rgb(122 178 236 / 55%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer__wordmark { animation: none; }
+}
+
+.footer__note {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: .6875rem;
+  color: #7a96b4;
+}
+
+.footer__meta {
+  flex: 0 0 auto;
+  font-size: .6875rem;
+  color: #7a96b4;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Invitacion a PEGASO como pill sutil */
+.footer__sibling {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  flex: 0 0 auto;
+  padding: .1875rem .6875rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  text-decoration: none;
+  color: #8fa8c6;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.footer__sibling-lead { font-size: .6875rem; }
+.footer__sibling-name {
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #dce8f5;
+}
+.footer__sibling-go::before { content: "\2197"; font-size: .6875rem; }
+
+.footer__sibling:hover {
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(255 255 255 / 18%);
+  color: #dce8f5;
+}
+.footer__sibling:hover .footer__sibling-name { color: #fff; }
+
+@media (max-width: 860px) {
+  .footer__inner { gap: .75rem; }
+  /* en el telefono el renglon solo da para la marca y el enlace hermano */
+  .footer__note, .footer__meta { display: none; }
+  .footer__sibling { margin-left: auto; }
+}
+
+/* Por debajo de 400 px ni eso cabe: la pastilla no encoge y empujaba el pie
+   fuera de la pantalla. Se queda con el nombre, que es lo que se pica. */
+@media (max-width: 400px) {
+  .footer__sibling-lead { display: none; }
+}

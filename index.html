@@ -1,210 +1,41 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-PE">
 <head>
-<meta charset="UTF-8">
-<title>SORIAN</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SORIAN — Predicción del clima | SENAMHI</title>
+<meta name="description" content="Sistema Operacional de Resolución Integrada para la Predicción del Clima. Predicción estacional multimodelo y monitoreo ENSO para el Perú y Sudamérica. SENAMHI.">
+<meta name="theme-color" content="#0a1c48">
+<meta name="author" content="SENAMHI — Subdirección de Cambio Climático y Modelamiento Atmosférico">
 
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+<meta property="og:type" content="website">
+<meta property="og:title" content="SORIAN — Predicción del clima">
+<meta property="og:description" content="Predicción estacional multimodelo y monitoreo ENSO para el Perú y Sudamérica.">
+<meta property="og:image" content="assets/hero-sudamerica.webp">
+<meta property="og:locale" content="es_PE">
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #e9eef3;
-}
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 
-/* ------------------------ BARRA SUPERIOR LOGOS ------------------------ */
-.top-bar {
-  background: white;
-  padding: 6px 18px;
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  border-bottom: 1px solid #cfcfcf;
-}
-.top-bar img { height: 45px; }
-
-/* ------------------------ MENÚ CENTRADO ------------------------ */
-.menu-bar {
-  background: white;
-  padding: 12px 20px;
-  border-bottom: 1px solid #cfcfcf;
-  display: flex;
-  justify-content: center;
-}
-
-.menu-links {
-  display: flex;
-  gap: 35px;
-}
-
-.menu-links a {
-  text-decoration: none;
-  color: #000;
-  font-size: 18px;
-  font-weight: 500;
-  padding-bottom: 4px;
-  cursor: pointer;
-}
-
-.menu-links a:hover {
-  border-bottom: 2px solid #000;
-}
-
-.menu-links a.active {
-  border-bottom: 3px solid #0073ff;
-  color: #0073ff;
-  font-weight: 700;
-}
-
-/* ------------------------ HERO IMAGE ------------------------ */
-#hero {
-  width: 100%;
-  height: 92vh;
-  background-image: url("https://raw.githubusercontent.com/SMN-SENAMHI/SORIAN/main/Lista/logo_sudamerica.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #001f3f;
-}
-
-/* ------------------------ CONTENIDO DINÁMICO ------------------------ */
-#content {
-  display: none;
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 40px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  min-height: 95vh;
-  transition: 0.3s ease-in-out;
-}
-
-/* ------------------------ RESPONSIVE ------------------------ */
-@media (max-width: 768px) {
-  #hero { height: 70vh; }
-  .menu-links { gap: 15px; font-size: 16px; }
-}
-</style>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="stylesheet" href="assets/vendor/leaflet.css">
+<link rel="stylesheet" href="src/styles/base.css">
+<link rel="stylesheet" href="src/styles/layout.css">
+<link rel="stylesheet" href="src/styles/components.css">
+<link rel="stylesheet" href="src/styles/viewer.css">
 </head>
-
 <body>
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div id="app"></div>
 
-<!-- ================= BARRA SUPERIOR ================= -->
-<div class="top-bar">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logominam.png">
-  <img src="https://raw.githubusercontent.com/SMN-SENAMHI/WEB/main/GRAFICAS/logosenamhi.jpg">
-</div>
+<noscript>
+  <p style="padding:1.5rem;text-align:center">
+    SORIAN requiere JavaScript para mostrar los visores climáticos.
+  </p>
+</noscript>
 
-<!-- ================= MENÚ ================= -->
-<div class="menu-bar">
-  <div class="menu-links">
-    <a onclick="showSection('home')" id="btn-home" class="active">Inicio</a>
-    <a onclick="showSection('descripcion')" id="btn-descripcion">Descripción</a>
-    <a onclick="showSection('subestacional')" id="btn-subestacional">Subestacional</a>
-    <a onclick="showSection('estacional')" id="btn-estacional">Estacional</a>
-    <a onclick="showSection('enso')" id="btn-enso">ENSO</a>
-    <a onclick="showSection('consultas')" id="btn-consultas">Consultas</a>
-  </div>
-</div>
-
-<!-- ================= PORTADA ================= -->
-<div id="hero"></div>
-
-<!-- ================= CONTENIDO ================= -->
-<div id="content"></div>
-
-<script>
-/* ================= UTILIDADES ================= */
-function clearActive() {
-  document.querySelectorAll('.menu-links a')
-    .forEach(a => a.classList.remove('active'));
-}
-
-/* ================= NAVEGACIÓN ================= */
-function showSection(section) {
-
-  clearActive();
-  document.getElementById("btn-" + section).classList.add("active");
-
-  const hero    = document.getElementById("hero");
-  const content = document.getElementById("content");
-
-  if (section === "home") {
-    hero.style.display    = "block";
-    content.style.display = "none";
-    content.innerHTML     = "";
-    content.style.maxWidth = "1000px";
-    content.style.padding  = "40px";
-    return;
-  }
-
-  hero.style.display    = "none";
-  content.style.display = "block";
-
-  /* 🔥 ENSO y ESTACIONAL usan ancho grande */
-  if (section === "estacional" || section === "enso") {
-    content.style.maxWidth = "97%";
-    content.style.padding  = "10px";
-
-  } else {
-    content.style.maxWidth = "1000px";
-    content.style.padding  = "40px";
-  }
-
-  let archivo = section.charAt(0).toUpperCase() + section.slice(1) + ".html";
-  if (section === "enso") archivo = "Enso.html";
-
-  fetch(archivo)
-    .then(r => r.text())
-    .then(html => {
-      content.innerHTML = html;
-
-      if (section === "estacional") initEstacional();
-      if (section === "enso") initENSO();
-    });
-}
-
-/* ================= ESTACIONAL ================= */
-function initEstacional() {
-  const modeloSelect   = document.getElementById("modelo");
-  const variableSelect = document.getElementById("variable");
-  const visorIframe    = document.getElementById("visor_estacional");
-  const btnCargar      = document.getElementById("btnCargarVisor");
-
-  if (!modeloSelect || !variableSelect || !visorIframe || !btnCargar) return;
-
-  function cargarVisor() {
-    visorIframe.src = `visor_${modeloSelect.value}_${variableSelect.value}.html`;
-  }
-
-  btnCargar.addEventListener("click", cargarVisor);
-  cargarVisor();
-}
-
-/* ================= ENSO (MISMO PATRÓN) ================= */
-function initENSO() {
-  const visor  = document.getElementById("enso-visor");
-  const btnBox = document.getElementById("btn-enso-boxplot");
-  const btnPer = document.getElementById("btn-enso-percentiles");
-
-  if (!visor || !btnBox || !btnPer) {
-    console.warn("ENSO: elementos no encontrados");
-    return;
-  }
-
-  function cargar(html) {
-    visor.src = html + "?ts=" + Date.now(); // evita cache
-  }
-
-  btnBox.addEventListener("click", () => cargar("BOXPLOT.html"));
-  btnPer.addEventListener("click", () => cargar("PERCENTILES.html"));
-
-  // carga inicial
-  cargar("BOXPLOT.html");
-}
-</script>
-
+<script type="module" src="src/main.js"></script>
 </body>
 </html>

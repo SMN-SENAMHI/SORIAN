@@ -1,0 +1,111 @@
+:root {
+  --navy: #0a1c48;
+  --navy-700: #123067;
+  --blue: #0b6bb8;
+  --blue-600: #0a5c9e;
+  --ink: #1c2430;
+  --muted: #5a6675;
+  --line: #d9e0e8;
+  --surface: #ffffff;
+  --canvas: #eef2f6;
+  --accent: #f3f7fb;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 10px rgb(10 28 72 / 8%);
+
+  /* La escala de anomalias de SORIAN reducida a una firma de 3 px: abre la
+     cabecera, encabeza la lamina de la portada y cierra el pie */
+  --scale-line: linear-gradient(90deg,
+    #543005 0%, #9d6115 9%, #bf812d 18%, #d5ad62 27%, #e7cf94 36%,
+    #f6e8c3 44%, #f6f1e5 50%, #e6f2f0 56%,
+    #c7eae5 64%, #98d7cd 73%, #67bbb1 82%, #35978f 91%, #003c30 100%);
+
+  /* Aire que el contenedor deja antes del pie. Lo declara el token porque la
+     lamina de la portada, que llega a sangre hasta el pie, lo recorta. */
+  --outlet-end: 2.5rem;
+
+  /* Riel izquierdo de la pagina. Cabecera, portada, lamina y pie arrancan
+     todos de esta misma vertical: hasta 1120/1600 px es el margen fijo y a
+     partir de ahi, lo que sobra al centrar la columna. */
+  --rail: calc(max(0px, 50vw - 560px) + 1rem);
+
+  --header-h: 56px;
+  --wrap: 1120px;
+
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (min-width: 900px) {
+  :root { --rail: calc(max(0px, 50vw - 800px) + 2rem); }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* El atributo hidden debe imponerse sobre cualquier display declarado */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--canvas);
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3 { line-height: 1.25; color: var(--navy); margin: 0 0 .5em; }
+h1 { font-size: clamp(1.5rem, 4.5vw, 2.125rem); }
+h2 { font-size: clamp(1.25rem, 3.5vw, 1.5rem); margin-top: 2rem; }
+h3 { font-size: 1.0625rem; margin-top: 1.5rem; }
+p { margin: 0 0 1rem; }
+
+a { color: var(--blue-600); }
+img { max-width: 100%; height: auto; }
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Visible solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+  padding: .75rem 1rem;
+  background: var(--navy);
+  color: #fff;
+}
+.skip-link:focus { left: .5rem; top: .5rem; }
+
+/* Entrada de vista: el contenido asciende al aparecer */
+.outlet.is-entering { animation: view-in .34s cubic-bezier(.22, .9, .3, 1) both; }
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* En el visor no se transforma el contenedor: el mapa se posiciona dentro */
+.outlet--app.is-entering { animation: view-fade .26s ease-out both; }
+@keyframes view-fade { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

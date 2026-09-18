@@ -1,0 +1,831 @@
+/* ---------- Pastilla deslizante ----------
+   Fondo comun de la opcion activa en cualquier grupo de capsulas: viaja
+   hasta ella en vez de aparecer de golpe en su sitio. */
+.marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+  /* el viaje lo anima marker.js por fotogramas: una transicion aqui pelearia
+     con ellos y aplanaria el estirado */
+  transition: opacity .18s linear;
+}
+.marker.is-visible { opacity: 1; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .625rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+
+/* ---------- Portada ---------- */
+/* La ilustracion no es una columna al lado del texto: es el fondo de toda la
+   portada, y el texto va encima. Partirla en dos mitades dejaba el globo
+   encajonado y media portada vacia. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: -1rem -1rem 0;
+  padding: 3.75rem var(--rail) 4rem;
+  color: #fff;
+  background: #061027;
+}
+
+/* Velo entre la imagen y el texto. Sin el, el globo compite con lo que hay
+   que leer; se abre hacia donde no hay texto para que la imagen respire. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* De pie el planeta va detras del texto, y el velo se afloja hasta dejarlo
+     ver entero: la esfera con su anillo, el penacho calido y la costa. Cede
+     menos en los cantos -arriba cae la cejilla, abajo empieza la lamina- y se
+     abre en el centro, que es donde la esfera tiene su dibujo. Lo que pierde
+     de apoyo la letra no lo devuelve el velo: lo pone su propio tono, un
+     punto mas claro, mas abajo. */
+  background: linear-gradient(180deg,
+    rgb(6 16 39 / 78%) 0%, rgb(6 16 39 / 58%) 45%, rgb(6 16 39 / 68%) 100%);
+}
+
+@media (min-width: 760px) {
+  /* La portada llega a los bordes de la ventana. Recuadrada dejaba a los lados
+     dos franjas del gris de la pagina contra una imagen oscura, y ese corte
+     partia la pantalla en tres. El margen negativo la saca del ancho util y el
+     relleno devuelve el texto a la misma columna que las tarjetas de abajo. */
+  .hero {
+    margin-inline: calc(50% - 50vw);
+    padding-block: 7rem;
+    border-radius: 0;
+  }
+  .hero::after {
+    background: linear-gradient(100deg,
+      #061027 0%, rgb(6 16 39 / 92%) 28%, rgb(6 16 39 / 58%) 52%,
+      rgb(6 16 39 / 14%) 78%, rgb(6 16 39 / 0%) 100%);
+  }
+}
+
+/* La cejilla es la linea mas larga del bloque: la columna se mide por ella
+   para que el nombre del area no parta en dos. El parrafo se estrecha aparte. */
+.hero__content { position: relative; z-index: 1; max-width: 45rem; }
+
+.hero__eyebrow {
+  font-size: .8125rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: #8fb7e0;
+  margin-bottom: 1.25rem;
+}
+
+.hero__title { position: relative; margin: 0 0 1rem; }
+
+/* La lampara que hay detras del nombre. Va en su propia capa y solo cambia
+   de opacidad -lo unico que el navegador puede animar sin repintar-, de modo
+   que la luminiscencia sale gratis. */
+.hero__title::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -22% -14% -22% -16%;
+  background: radial-gradient(52% 128% at 40% 50%,
+    rgb(108 172 240 / 38%) 0%, rgb(108 172 240 / 0%) 72%);
+  filter: blur(16px);
+  opacity: .28;
+  animation: marca-luz 6.5s ease-in-out .8s infinite;
+}
+.wordmark {
+  display: block;
+  color: #fff;
+  /* El tope sube de 100 a 132 px: en pantalla amplia la portada es el planeta
+     y el nombre, nada mas, y con la marca a la medida anterior quedaba medio
+     lienzo de cielo vacio entre los dos. El termino central no se toca, asi
+     que de 320 a 768 px la marca mide exactamente lo que media. */
+  font-size: clamp(3.25rem, 13vw, 8.25rem);
+  font-weight: 600;
+  letter-spacing: .15em;
+  line-height: 1;
+  /* el interletrado tambien va detras de la ultima letra: se descuenta, como
+     en la cabecera y en el pie, para que la caja termine donde termina la N */
+  margin-right: -.15em;
+  /* luz escondida detras del nombre: un filo claro en el canto, un halo azul
+     y una sombra que lo asienta sobre la ilustracion. El halo respira al
+     mismo compas que la lampara de detras. */
+  text-shadow:
+    0 0 1px rgb(226 240 255 / 40%),
+    0 0 26px rgb(122 178 236 / 26%),
+    0 0 68px rgb(58 122 200 / 18%),
+    0 16px 38px rgb(2 8 22 / 55%);
+  animation: marca-halo 6.5s ease-in-out .8s infinite;
+}
+
+@keyframes marca-luz {
+  50% { opacity: 1; }
+}
+
+@keyframes marca-halo {
+  50% {
+    text-shadow:
+      0 0 2px rgb(232 244 255 / 72%),
+      0 0 30px rgb(146 199 247 / 62%),
+      0 0 84px rgb(74 144 218 / 42%),
+      0 16px 38px rgb(2 8 22 / 55%);
+  }
+}
+
+/* si el sistema pide quietud, la luz se queda encendida a media asta */
+@media (prefers-reduced-motion: reduce) {
+  .hero__title::before { animation: none; opacity: .6; }
+  .wordmark { animation: none; }
+}
+
+.hero__text {
+  color: #a9c0da;
+  font-size: clamp(1.125rem, 1.4vw, 1.3125rem);
+  margin-bottom: 0;
+  max-width: 42ch;
+}
+
+.hero__art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  /* De pie se ensena la esfera entera y centrada, que es como se lee que hay
+     un planeta y no una mancha azul: un 12% por encima del hueco basta para
+     que el anillo del limbo entre por los cuatro lados sin quedar pegado a
+     los cantos. En vertical el alto manda sobre el ancho, de modo que el 112%
+     del alto es el "cover" de siempre agrandado; tumbado el telefono manda el
+     ancho y ahi ya no cubre, asi que el max() lo devuelve al cover justo. */
+  background: url("../../assets/globo-sm.webp") 50% 50% / auto max(112%, 100vw) no-repeat;
+}
+
+/* En pantalla densa el recorte pequeno se queda corto: ahora el planeta es el
+   motivo de la portada y no una veladura, y a 2x sus 440 px se estiran dos
+   veces y media. Los 880 px solo los descarga quien pueda verlos. */
+@media (max-width: 759px) and (-webkit-min-device-pixel-ratio: 2),
+       (max-width: 759px) and (min-resolution: 2dppx) {
+  .hero__art { background-image: url("../../assets/globo.webp"); }
+}
+@media (min-width: 760px) {
+  .hero__art {
+    background-image: url("../../assets/globo.webp");
+    /* algo mas alto que la portada: el globo asoma por arriba y por abajo, lo
+       justo para leerse como fondo y no como una figura pegada, pero sin
+       comerse un tercio de la esfera */
+    background-position: 74% center;
+    /* La esfera lleva su halo dentro del recorte, asi que ocupa algo menos
+       que el lado del archivo: el alto compensa esa holgura para que asome
+       por arriba y por abajo como antes. */
+    background-size: auto 124%;
+  }
+}
+
+/* La portada entra en vez de aparecer de golpe. El texto sube unos pixeles
+   mientras aparece y el globo se revela algo despues, creciendo apenas, para
+   que la mirada llegue primero al nombre y luego a la ilustracion.
+
+   Cada regla declara solo el fotograma inicial: el final es el estado propio
+   del elemento, que no es el mismo en movil -el globo vive al 50% de opacidad
+   detras del texto- que en pantalla amplia. Y nada de esto corre si el
+   sistema pide movimiento reducido. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__eyebrow,
+  .hero__title,
+  .hero__text { animation: hero-rise .55s cubic-bezier(.2, .75, .3, 1) backwards; }
+
+
+  .hero__eyebrow { animation-delay: .05s; }
+  .hero__title { animation-delay: .13s; }
+  .hero__text { animation-delay: .21s; }
+
+  .hero__art { animation: hero-reveal .9s cubic-bezier(.2, .7, .3, 1) .18s backwards; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(14px); }
+}
+@keyframes hero-reveal {
+  from { opacity: 0; transform: scale(.93); }
+}
+
+/* ---------- Lamina de dos puertas ---------- */
+/* Las dos maneras de mirar el clima que ofrece la plataforma, a la par: un
+   campo sobre el mapa y una serie de tiempo. No son tarjetas que anuncien las
+   secciones -eso ya lo hace el menu-: son las secciones asomando, con su dato
+   en marcha. A la izquierda el pronostico estacional, desenfocado y bajo un
+   velo porque ahi el mapa hace de fondo; a la derecha la serie del ENSO sobre
+   el navy limpio, que una linea necesita fondo quieto para poder leerse. */
+.showcase {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 calc(50% - 50vw);
+  color: #fff;
+  background: #061027;
+}
+
+/* Cierra la portada a ras del pie: el aire que el contenedor reserva abriria
+   una franja clara justo donde la firma cromatica del pie ya hace de remate. */
+.showcase:last-child { margin-bottom: calc(-1 * var(--outlet-end)); }
+
+.showcase__panel {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  /* El campo va agrandado un 3 % para tapar lo que le descubre el desenfoque,
+     asi que asoma por los cantos del panel: aqui se recorta. Sin esto el
+     sobrante caia sobre el panel vecino, donde no llega el velo, y dejaba una
+     tira de mapa a plena luz justo en la junta. */
+  overflow: hidden;
+  padding: 3rem 2rem 2.5rem;
+  min-height: clamp(24rem, 33vw, 38rem);
+}
+
+/* Cada panel arranca del riel de su lado. La lamina va a sangre, pero su texto
+   tiene que caer en la misma vertical en la que arrancan la cabecera y el pie. */
+.showcase__panel--map { padding-left: var(--rail); }
+.showcase__panel--enso { padding-right: var(--rail); }
+
+/* La junta: un hilo que se apaga bastante antes de los cantos. No tiene que
+   partir la banda -el cambio de fondo entre los dos paneles ya dice donde
+   acaba uno-, solo afirmar el reparto. */
+.showcase__panel--enso::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgb(226 238 250 / 0%) 10%, rgb(226 238 250 / 14%) 34%,
+    rgb(226 238 250 / 14%) 66%, rgb(226 238 250 / 0%) 90%);
+}
+
+/* Campo y limites en dos capas, porque el velo se mete entre ellas: el dato
+   queda de fondo y el pais, nitido. Sin los limites el campo es una mancha
+   sin pais; con ellos, un mapa. */
+.showcase__field { position: absolute; inset: 0; pointer-events: none; }
+.showcase__layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.showcase__layer--field {
+  z-index: -3;
+  filter: blur(3px);
+  /* el desenfoque descubre los bordes del lienzo: se agranda un pelo */
+  transform: scale(1.03);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+/* la clase la pone el modulo cuando ya hay campo: sin ella se veria el
+   rectangulo vacio mientras carga la grilla */
+.showcase__layer--field.is-ready { opacity: .72; }
+.showcase__layer--lines { z-index: -1; }
+
+/* Velo entre el campo y los limites. Cierra arriba y abajo -donde caen el
+   titulo y el pie- y se abre por el medio, que es donde no hay nada escrito.
+
+   Y cierra tambien hacia la junta, hasta el navy de la banda: el mapa llega a
+   sangre y cortarlo a cuchillo contra el panel del grafico dejaba un canto
+   duro de canto a canto. Disuelto, los dos paneles comparten fondo y el unico
+   que marca el reparto es el hilo. */
+.showcase__panel--map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgb(6 16 39 / 0%) 58%, rgb(6 16 39 / 94%) 100%),
+    linear-gradient(172deg,
+      rgb(6 16 39 / 84%) 0%, rgb(6 16 39 / 44%) 44%, rgb(6 16 39 / 78%) 100%);
+}
+
+/* Un rescoldo detras del grafico: medio panel de navy plano al lado de un mapa
+   se lee como un hueco, no como el otro miembro de la pareja. El color sale
+   del propio dato -el granate del ensamble y el azul de lo observado-, muy
+   rebajado, de modo que no compite con las lineas que lleva encima. */
+.showcase__panel--enso::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(118% 88% at 76% 44%, rgb(169 68 85 / 13%) 0%, rgb(169 68 85 / 0%) 64%),
+    radial-gradient(92% 72% at 8% 102%, rgb(11 107 184 / 10%) 0%, rgb(11 107 184 / 0%) 72%);
+}
+
+/* La costura entre la portada y la lamina: solo la sombra que un plano
+   proyecta sobre el de abajo. Aqui iba tambien la escala de anomalias en 3 px
+   -la misma firma que abre la cabecera y cierra el pie-, pero cortaba en seco
+   el cielo del planeta justo donde la portada se disuelve en la banda: dos
+   remates de color a un centimetro uno del otro. La firma se queda donde
+   enmarca la pagina entera, arriba y abajo, y la costura se limita a decir
+   que hay un plano por debajo. */
+.showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  height: 3.5rem;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(2 8 22 / 58%) 0%, rgb(2 8 22 / 0%) 100%);
+}
+
+.showcase__head { min-width: 0; }
+
+.showcase__title {
+  margin: 0;
+  /* los encabezados van en navy: sobre este fondo hay que decirlo */
+  color: #fff;
+  font-size: clamp(1.375rem, 2.1vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -.018em;
+  line-height: 1.14;
+  text-wrap: balance;
+  /* halo, no recuadro: separa el titulo del mapa sin dibujarle una caja */
+  text-shadow: 0 1px 2px rgb(2 8 22 / 45%), 0 14px 40px rgb(2 8 22 / 60%);
+}
+
+/* Una sola frase: el subtitulo dice que se esta viendo, no cuenta la seccion
+   entera. Repartida la banda en dos, la medida baja a la de una columna. */
+.showcase__text {
+  margin: .625rem 0 0;
+  max-width: 44ch;
+  color: #dfeaf8;
+  font-weight: 500;
+  font-size: clamp(.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.45;
+  letter-spacing: -.005em;
+  text-shadow: 0 1px 14px rgb(2 8 22 / 65%);
+}
+
+/* El hueco del grafico se come lo que sobra del panel, que es como queda a la
+   misma altura que el mapa de al lado sin fijarle una medida. */
+.showcase__chart {
+  position: relative;
+  flex: 1 1 auto;
+  /* Suelo propio: el hueco que sobra entre el encabezado y el pie depende de
+     cuantos renglones ocupe cada uno, y por debajo de esto la serie deja de
+     ser un grafico para ser un garabato. Si no cabe, crece la banda. */
+  min-height: 11rem;
+  margin-top: -.25rem;
+}
+.showcase__plot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+/* la clase la pone el modulo cuando ya tiene la serie: sin ella se veria el
+   rectangulo vacio mientras carga el JSON */
+.showcase__plot.is-ready { opacity: 1; }
+
+/* El pie de cada panel se pega al fondo, de modo que los dos sellos, las dos
+   leyendas y las dos puertas queden a la misma altura aunque el texto de
+   arriba ocupe renglones distintos. */
+.showcase__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .875rem;
+  margin-top: auto;
+}
+.showcase__stamp {
+  margin: 0;
+  font-size: .8125rem;
+  color: #9db6d2;
+  letter-spacing: .03em;
+}
+.showcase__model { color: #9db6d2; }
+.showcase__month { color: #fff; font-variant-numeric: tabular-nums; }
+
+/* La leyenda del mapa es la del visor; sobre el velo cambian los tonos. */
+.showcase__legend { width: 100%; max-width: 24rem; }
+.showcase .legend__bar { height: 11px; border-radius: 3px; box-shadow: 0 0 0 1px rgb(255 255 255 / 20%); }
+.showcase .legend__ticks { color: #c3d5ea; font-size: .75rem; margin-top: .3125rem; }
+
+/* La del grafico va en linea, con la muestra de la dispersion hecha del mismo
+   granate anidado que las bandas: tres alfas apiladas dicen que son bandas
+   dentro de bandas mejor que tres muestras separadas. */
+.showcase__legend--key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem 1rem;
+  max-width: none;
+  font-size: .75rem;
+  color: #a9c0d8;
+}
+.showcase__legend--key .key__swatch--area {
+  width: 14px;
+  height: 14px;
+  border-color: rgb(255 255 255 / 16%);
+}
+
+/* Puerta a una seccion: pastilla blanca con la flecha en su propio disco. El
+   rotulo y el disco se reparten el peso, de modo que el enlace se lee como un
+   mando y no como una frase con una flecha detras; al apuntarlo el disco se
+   llena de navy y la flecha avanza. */
+.gateway {
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  flex: 0 0 auto;
+  max-width: 100%;
+  padding: .3125rem .3125rem .3125rem 1.125rem;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--navy);
+  font-size: .9375rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgb(3 10 26 / 32%);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.gateway__label { min-width: 0; }
+.gateway__arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgb(10 28 72 / 8%);
+  color: var(--navy);
+  transition: background .18s, color .18s, transform .18s ease;
+}
+.gateway__arrow svg { width: 17px; height: 17px; display: block; }
+.gateway:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgb(3 10 26 / 42%); }
+.gateway:hover .gateway__arrow { background: var(--navy); color: #fff; transform: translateX(2px); }
+
+/* La entrada se arma desde JS -.is-armed-, no aqui: si el modulo no llega a
+   correr, la banda se ve entera en vez de quedarse invisible. Los tramos de
+   cada panel suben escalonados, y el de la derecha va detras del de la
+   izquierda para que la pareja se lea en orden de lectura. */
+.showcase.is-armed .showcase__head,
+.showcase.is-armed .showcase__chart,
+.showcase.is-armed .showcase__foot {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .7s ease, transform .8s cubic-bezier(.2, .75, .3, 1);
+}
+.showcase.is-armed .showcase__chart { transition-delay: .1s; }
+.showcase.is-armed .showcase__foot { transition-delay: .16s; }
+.showcase.is-armed .showcase__panel--enso .showcase__head { transition-delay: .1s; }
+.showcase.is-armed .showcase__panel--enso .showcase__foot { transition-delay: .24s; }
+
+.showcase.is-armed.is-in .showcase__head,
+.showcase.is-armed.is-in .showcase__chart,
+.showcase.is-armed.is-in .showcase__foot { opacity: 1; transform: none; }
+
+@media (max-width: 759px) {
+  /* La cejilla es la linea mas larga de la portada: a 13 px se comia tres
+     renglones del telefono antes de llegar al nombre. */
+  /* Con el planeta visible detras, la letra se apoya en su propio tono en vez
+     de en un velo mas espeso: sube un punto y lleva una sombra corta que la
+     despega del dibujo. Medido de 320 a 430 px contra el peor punto de la
+     esfera, la entradilla no baja de 5:1 ni la cejilla de 5.1:1. */
+  .hero__eyebrow {
+    font-size: .6875rem;
+    letter-spacing: .08em;
+    margin-bottom: .875rem;
+    color: #bcd4ee;
+    text-shadow: 0 1px 10px rgb(2 8 22 / 75%);
+  }
+  .hero__text { color: #d6e6f7; text-shadow: 0 1px 12px rgb(2 8 22 / 75%); }
+
+  /* El nombre, al centro, y solo el nombre: de pie la portada es una sola
+     columna y la marca es lo unico que no se lee renglon a renglon, asi que
+     centrada se comporta como un rotulo. La cejilla y la entradilla siguen
+     arrancando del riel, como el resto de la pagina.
+
+     No hace falta corregir el interletrado: el descuento de -.15em ensancha
+     la caja justo lo que sobra detras de la N, de modo que al centrar el
+     bloque quedan centrados los trazos y no el hueco que los sigue. */
+  .hero__title { text-align: center; }
+
+  /* La lampara viaja con el nombre: estaba puesta al 40% del ancho, que es
+     donde caia con la marca pegada al riel. */
+  .hero__title::before {
+    inset: -22% -12%;
+    background: radial-gradient(56% 128% at 50% 50%,
+      rgb(108 172 240 / 38%) 0%, rgb(108 172 240 / 0%) 72%);
+  }
+
+  /* De pie los paneles se apilan. Media banda por cabeza serian dos tiras de
+     160 px en las que no cabe ni el titulo, asi que se reparte el alto en vez
+     del ancho: el mapa primero, la serie debajo. */
+  .showcase { grid-template-columns: 1fr; margin-inline: -1rem; }
+  .showcase__panel {
+    gap: 1rem;
+    padding: 2.25rem var(--rail) 1.75rem;
+    min-height: 0;
+  }
+  /* tres rem menos: es lo que ocupaban las capsulas de variable */
+  .showcase__panel--map { min-height: 24rem; }
+  .showcase__panel--enso { min-height: 25rem; }
+
+  /* la junta gira con el reparto: ahora separa arriba de abajo */
+  .showcase__panel--enso::before {
+    inset: 0 0 auto;
+    width: auto;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgb(226 238 250 / 0%) 4%, rgb(226 238 250 / 14%) 26%,
+      rgb(226 238 250 / 14%) 74%, rgb(226 238 250 / 0%) 96%);
+  }
+
+  /* De pie el velo cierra por abajo, que es donde cae el texto y donde ahora
+     esta la junta: el mapa se disuelve hacia el panel de abajo, no hacia el
+     costado. */
+  .showcase__panel--map::after {
+    background: linear-gradient(185deg,
+      rgb(6 16 39 / 84%) 0%, rgb(6 16 39 / 48%) 38%,
+      rgb(6 16 39 / 86%) 88%, rgb(6 16 39 / 96%) 100%);
+  }
+
+  /* la puerta a lo ancho, con la flecha anclada al canto opuesto del rotulo */
+  .gateway { width: 100%; justify-content: space-between; }
+}
+
+/* ---------- Barra de vista ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .875rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* El encabezado y la barra comparten renglon: el titulo dice que se mira y
+   los mandos, como, asi que separarlos en dos bandas gastaba alto sin
+   explicar nada. La entradilla cede ancho -de 65 a 46 caracteres- porque es
+   lo unico que puede encogerse sin volverse ilegible. Cuando ya no caben
+   lado a lado, la barra baja entera bajo el texto. */
+.view__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2.5rem;
+  margin-bottom: 1.5rem;
+}
+.view__top .view__header { flex: 1 1 24rem; min-width: 0; margin-bottom: 0; }
+.view__top .view__lead { max-width: 46ch; }
+.view__top .toolbar { flex: 0 1 auto; min-width: 0; margin-bottom: 0; justify-content: flex-end; gap: .625rem .75rem; }
+
+/* Conmutador de opcion unica, para alternar entre vistas del mismo dato */
+.segmented {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 3px;
+  background: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.segmented:empty { display: none; }
+.segmented .marker { background: var(--surface); box-shadow: 0 1px 4px rgb(10 28 72 / 16%); }
+
+.segmented__option {
+  position: relative;
+  z-index: 1;
+  min-height: 38px;
+  padding: .375rem 1.0625rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+.segmented__option:hover { color: var(--navy); }
+.segmented__option.is-active { color: var(--navy); }
+
+/* ---------- Clave de lectura ---------- */
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 1.25rem;
+  font-size: .8125rem;
+  color: var(--muted);
+}
+.key:empty { display: none; }
+.key__title {
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.key__item { display: inline-flex; align-items: center; gap: .4375rem; }
+.key__swatch { width: 22px; height: 3px; border-radius: 2px; flex: 0 0 auto; }
+.key__swatch--area {
+  width: 15px; height: 15px;
+  border-radius: 4px;
+  border: 1px solid rgb(0 0 0 / 12%);
+}
+.key--categories { padding-top: 1rem; border-top: 1px solid var(--line); }
+
+/* En pantalla estrecha manda el toque: pistas fuera y controles a lo ancho */
+@media (max-width: 640px) {
+  .toolbar { gap: .625rem; margin-bottom: 1.125rem; }
+  .segmented { width: 100%; }
+  .segmented__option { flex: 1 1 0; min-width: 0; padding: .375rem .375rem; font-size: .8125rem; }
+  .key { gap: .375rem .875rem; font-size: .75rem; }
+}
+
+/* ---------- Estados ---------- */
+.spinner { display: grid; place-items: center; gap: .75rem; padding: 2rem 1rem; color: var(--muted); }
+.spinner__ring {
+  width: 30px; height: 30px;
+  border: 3px solid var(--line);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-box {
+  display: grid; gap: .75rem; justify-items: start;
+  padding: 1rem;
+  background: #fdf2f2;
+  border: 1px solid #f3c9c9;
+  border-radius: var(--radius-sm);
+  color: #8a2020;
+}
+
+/* ---------- Contenido ---------- */
+.prose {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.25rem;
+}
+@media (min-width: 760px) { .prose { padding: 2.5rem 3rem; } }
+.prose ul, .prose ol { padding-left: 1.25rem; margin: 0 0 1rem; }
+.prose li { margin-bottom: .375rem; }
+
+.table-wrap { overflow-x: auto; margin-bottom: 1.5rem; -webkit-overflow-scrolling: touch; }
+.table { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 34rem; }
+.table th, .table td { padding: .625rem .75rem; text-align: left; }
+.table thead th { background: var(--navy-700); color: #fff; position: sticky; top: 0; }
+.table tbody th { font-weight: 700; color: var(--navy); }
+.table tbody tr:nth-child(odd) { background: var(--accent); }
+
+.refs { list-style: decimal; }
+.ref { margin-bottom: 1rem; font-size: .875rem; }
+.ref__authors { display: block; font-weight: 600; }
+.ref__title { display: block; color: var(--muted); }
+.ref__doi { word-break: break-all; }
+
+.form-frame {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.form-frame__iframe { display: block; width: 100%; height: min(1200px, 150dvh); border: 0; }
+
+/* ---------- Selector de series ---------- */
+/* Una veintena de modelos. Como rejilla de ancho fijo ocupaban media pantalla,
+   asi que van en pastillas que fluyen y, en pantalla estrecha, dentro de un
+   pliegue: desplegadas empujaban el grafico fuera de la vista. */
+.series { min-width: 0; }
+.series:empty { display: none; }
+
+.series__box {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.series__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  min-height: 42px;
+  padding: .375rem .75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  list-style: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.series__head::-webkit-details-marker { display: none; }
+.series__head:hover { background: var(--accent); }
+
+.series__count { font-size: .75rem; font-weight: 600; color: var(--muted); }
+.series__count strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.series__more {
+  display: inline-flex;
+  align-items: center;
+  gap: .4375rem;
+  flex: 0 0 auto;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--blue-600);
+}
+.series__more::before { content: "Elegir"; }
+.series__box[open] .series__more::before { content: "Ocultar"; }
+
+/* punta que gira al desplegar */
+.series__more::after {
+  content: "";
+  width: 6px; height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .2s;
+}
+.series__box[open] .series__more::after { transform: translateY(1px) rotate(-135deg); }
+
+.series__body { padding: 0 .75rem .625rem; }
+
+.series__actions { display: flex; gap: .375rem; margin-bottom: .5rem; }
+.series__action {
+  min-height: 32px;
+  padding: .25rem .625rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--blue-600);
+  cursor: pointer;
+}
+.series__action:hover:not(:disabled) { border-color: var(--blue); background: var(--accent); }
+.series__action:disabled { opacity: .4; cursor: default; }
+
+/* pastillas del ancho de su nombre: caben tres por linea en un movil */
+.series__list { display: flex; flex-wrap: wrap; gap: .3125rem; }
+
+.series__item {
+  display: inline-flex;
+  align-items: center;
+  gap: .4375rem;
+  min-height: 32px;
+  padding: .25rem .625rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  font-size: .75rem;
+  text-align: left;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.series__item:hover { border-color: var(--blue); background: var(--accent); }
+.series__item.is-active {
+  color: var(--ink);
+  font-weight: 600;
+  border-color: var(--blue);
+  background: var(--accent);
+}
+.series__swatch {
+  width: 10px; height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgb(0 0 0 / 20%);
+  opacity: .3;
+  transition: opacity .12s;
+}
+.series__item.is-active .series__swatch { opacity: 1; }
+.series__name { white-space: nowrap; }
