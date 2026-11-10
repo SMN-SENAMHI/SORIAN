@@ -1,0 +1,81 @@
+<!-- =========================================================
+     ENSO – ESTRUCTURA PASIVA
+     La lógica vive en index.html
+     ========================================================= -->
+
+<style>
+/* ================= CONTENEDOR GENERAL ================= */
+.enso-wrapper {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    min-height: 70vh;
+}
+
+/* ================= PANEL LATERAL ================= */
+.enso-panel {
+    width: 260px;
+    flex-shrink: 0;
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.enso-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+/* ================= BOTONES ================= */
+.enso-btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #0077cc;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: default; /* controlado desde index.html */
+}
+
+.enso-btn.secondary {
+    background: #444;
+}
+
+/* ================= VISOR ================= */
+#enso-visor {
+    width: 100%;
+    height: calc(100vh - 260px);
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+</style>
+
+<div class="enso-wrapper">
+
+    <!-- PANEL -->
+    <div class="enso-panel">
+        <div class="enso-title">ENSO — Visualización</div>
+
+        <!-- Los botones NO tienen JS aquí -->
+        <button id="btn-enso-boxplot" class="enso-btn">
+            📦 BOXPLOT
+        </button>
+
+        <button id="btn-enso-percentiles" class="enso-btn secondary">
+            📊 PERCENTILES
+        </button>
+    </div>
+
+    <!-- VISOR -->
+    <iframe id="enso-visor"></iframe>
+
+</div>
